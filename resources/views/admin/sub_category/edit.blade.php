@@ -48,11 +48,12 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Slug</label>
-                                <input type="text" readonly name="slug" id="slug" class="form-control"
+                                <input type="text"  name="slug" id="slug" class="form-control"
                                     placeholder="Slug" value="{{ $subCategory->slug }}">
                                     <p></p>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="status">Status</label>
@@ -65,6 +66,19 @@
                                 <p></p>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3" style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                <label for="status" >Show On Home</label>
+                                <select name="showHome" id="showHome" class="form-control">
+                                    <option {{ ($subCategory->showHome == 'Yes') ? 'selected' : '' }} value="Yes" style="font-family: 'Times New Roman', Times, serif;">Yes
+                                    </option>
+                                    <option {{ ($subCategory->showHome == 'No') ? 'selected' : '' }} value="No" style="font-family: 'Times New Roman', Times, serif;">No
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

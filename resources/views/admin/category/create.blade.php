@@ -62,6 +62,19 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3" style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                <label for="status" >Show On Home</label>
+                                <select name="showHome" id="showHome" class="form-control">
+                                    <option value="Yes" style="font-family: 'Times New Roman', Times, serif;">Yes
+                                    </option>
+                                    <option value="No" style="font-family: 'Times New Roman', Times, serif;">No
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

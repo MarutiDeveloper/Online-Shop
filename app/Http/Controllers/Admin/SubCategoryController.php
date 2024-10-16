@@ -29,11 +29,11 @@ class SubCategoryController extends Controller
     }
     public function create()
     {
-
-        $categories = category::orderBy('name', 'ASC')->get();
-
-        $data['categories'] = $categories;
-        return view('admin.sub_category.create', $data);
+        // Fetch only active categories
+        $categories = Category::where('status', 1)->orderBy('name', 'ASC')->get(); 
+    
+        // Pass the active categories to the view
+        return view('admin.sub_category.create', compact('categories'));
     }
     public function store(Request $request)
     {
@@ -50,6 +50,7 @@ class SubCategoryController extends Controller
             $subCategory->name = $request->name;
             $subCategory->slug = $request->slug;
             $subCategory->status = $request->status;
+            $subCategory->showHome = $request->showHome;
             $subCategory->category_id = $request->category;
             $subCategory->save();
 
@@ -107,10 +108,11 @@ class SubCategoryController extends Controller
         ]);
 
         if ($validator->passes()) {
-            
+
             $subCategory->name = $request->name;
             $subCategory->slug = $request->slug;
             $subCategory->status = $request->status;
+            $subCategory->showHome = $request->showHome;
             $subCategory->category_id = $request->category;
             $subCategory->save();
 
@@ -128,7 +130,8 @@ class SubCategoryController extends Controller
             ]);
         }
     }
-    public function destroy($id, Request $request){
+    public function destroy($id, Request $request)
+    {
 
         $subCategory = SubCategory::find($id);
         if (empty($subCategory)) {

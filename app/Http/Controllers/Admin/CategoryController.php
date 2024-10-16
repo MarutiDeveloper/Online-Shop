@@ -43,6 +43,7 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status; // Ensure this field exists in your request
+            $category->showHome = $request->showHome; // Ensure this field exists in your request
             $category->save();
 
 
@@ -121,6 +122,7 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status; // Ensure this field exists in your request
+            $category->showHome = $request->showHome;
             $category->save();
 
             $oldImage = $category->image;

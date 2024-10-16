@@ -34,11 +34,32 @@ class ProductController extends Controller
     public function create()
     {
         $data = [];
-        $categories = category::orderBy('name', 'ASC')->get();
+
+        // Fetch only active categories
+        $categories = Category::where('status', 1)->orderBy('name', 'ASC')->get();
+
+        // Fetch all brands (if you want to keep this as is)
         $brands = Brand::orderBy('name', 'ASC')->get();
+        $brands = Brand::where('status', 1)->orderBy('name', 'ASC')->get(); // Fetch only active brands
+
+        // Pass the filtered categories and brands to the view
         $data['categories'] = $categories;
         $data['brands'] = $brands;
+       
+
         return view('admin.products.create', $data);
+    }
+    public function getSubCategories(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+
+        // Fetch only active sub-categories for the selected category
+        $subCategories = SubCategory::where('category_id', $categoryId)
+            ->where('status', 1) // Ensure only active sub-categories are fetched
+            ->orderBy('name', 'ASC')
+            ->get();
+
+        return response()->json(['subCategories' => $subCategories]);
     }
     public function store(Request $request)
     {

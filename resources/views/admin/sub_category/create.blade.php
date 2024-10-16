@@ -19,7 +19,7 @@
 <section class="content">
     <!-- Default box -->
     <div class="container-fluid">
-    @include("admin.message")
+        @include("admin.message")
         <form action="" name="subCategoryForm" id="subCategoryForm">
             <div class="card">
                 <div class="card-body">
@@ -50,9 +50,10 @@
                                 <label for="slug">Slug</label>
                                 <input type="text" readonly name="slug" id="slug" class="form-control"
                                     placeholder="Slug">
-                                    <p></p>
+                                <p></p>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="status">Status</label>
@@ -65,6 +66,19 @@
                                 <p></p>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3" style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                <label for="status" >Show On Home</label>
+                                <select name="showHome" id="showHome" class="form-control">
+                                    <option value="Yes" style="font-family: 'Times New Roman', Times, serif;">Yes
+                                    </option>
+                                    <option value="No" style="font-family: 'Times New Roman', Times, serif;">No
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -82,8 +96,7 @@
 @section('customJs')
 <script>
 
-$("#subCategoryForm").submit(function (event) 
-    {
+    $("#subCategoryForm").submit(function (event) {
         event.preventDefault();
 
         var element = $("#subCategoryForm");
@@ -106,7 +119,7 @@ $("#subCategoryForm").submit(function (event)
                     $("#slug").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
 
-                        $("#category").removeClass('is-invalid').siblings('p')
+                    $("#category").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
                 } else {
                     var errors = response['errors'];

@@ -158,25 +158,21 @@
                             <h2 class="h4  mb-3">Product category</h2>
                             <div class="mb-3">
                                 <label for="category">Category</label>
-                                <select name="category" id="category" class="form-control"
-                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                <select name="category" id="category" class="form-control">
                                     <option value="">Select a Category</option>
-
                                     @if ($categories->isNotEmpty())
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                                     @endif
-
                                 </select>
                                 <p class="error"></p>
                             </div>
                             <div class="mb-3">
                                 <label for="category">Sub category</label>
                                 <select name="sub_category" id="sub_category" class="form-control"
-                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">
                                     <option value="">Select a Sub Category</option>
-
                                 </select>
                             </div>
                         </div>
@@ -186,7 +182,7 @@
                             <h2 class="h4 mb-3">Product brand</h2>
                             <div class="mb-3">
                                 <select name="brand" id="brand" class="form-control"
-                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">
                                     <option value="">Select a Brand</option>
                                     @if ($brands->isNotEmpty())
                                         @foreach ($brands as $brand)
@@ -286,23 +282,31 @@
     });
 
     $("#category").change(function () {
-
         var category_id = $(this).val();
+
+        // Perform AJAX call to fetch sub-categories
         $.ajax({
-            url: '{{ route('product-subcategories.index') }}',
+            url: '{{ route('product-subcategories.index') }}', // Make sure this route matches your controller method
             type: 'get',
             data: { category_id: category_id },
             dataType: 'json',
             success: function (response) {
-                //console.log(response);
-
+                // Clear existing sub-category options except the first
                 $("#sub_category").find("option").not(":first").remove();
-                $.each(response["subCategories"], function (key, item) {
-                    $("#sub_category").append(`<option value= '${item.id}'>${item.name}</option>`)
-                });
+
+                // Check if there are any sub-categories
+                if (response.subCategories.length > 0) {
+                    // Loop through each sub-category and append to dropdown
+                    $.each(response.subCategories, function (key, item) {
+                        $("#sub_category").append(`<option value='${item.id}'>${item.name}</option>`);
+                    });
+                } else {
+                    // Optionally handle case where there are no active sub-categories
+                    $("#sub_category").append(`<option value="">No active sub-categories available</option>`);
+                }
             },
             error: function () {
-                console.log("Something Went Wrong");
+                console.log("Something went wrong");
             }
         });
     });
