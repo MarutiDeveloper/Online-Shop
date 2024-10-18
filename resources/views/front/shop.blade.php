@@ -114,8 +114,10 @@
                                 </div> -->
                                 <select name="sort" id="sort" class="form-control">
                                     <option value="latest" {{ ($sort == 'latest') ? 'selected' : '' }}>Latest</option>
-                                    <option value="price_desc" {{ ($sort == 'price_desc') ? 'selected' : '' }}>Price High</option>
-                                    <option value="price_asc" {{ ($sort == 'price_asc') ? 'selected' : '' }}>Price Low</option>
+                                    <option value="price_desc" {{ ($sort == 'price_desc') ? 'selected' : '' }}>Price High
+                                    </option>
+                                    <option value="price_asc" {{ ($sort == 'price_asc') ? 'selected' : '' }}>Price Low
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -134,7 +136,7 @@
 
 
                                                                 <!-- <a href="" class="product-img"><img class="card-img-top" src="images/product-1.jpg"
-                                                                                                                                                                                                                                                                                                                                        alt=""></a> -->
+                                                                                                                                                                                                                                                                                                                                                                        alt=""></a> -->
                                                                 <a href="#" class="product-img">
                                                                     @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
                                                                         <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}"
@@ -156,6 +158,17 @@
                                                             </div>
                                                             <div class="card-body text-center mt-3">
                                                                 <a class="h6 link" href="product.php">{{ $product->title }}</a>
+
+                                                                <a class="h5 link" href="product.php"
+                                                                    style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
+                                                                    <h5 style="font-family:fantasy ">Brand :-
+                                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}
+                                                                </a></h5>
+                                                                <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
+                                                                </span></h4>
+
+
+
                                                                 <div class="price mt-2">
                                                                     <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
                                                                     @if ($product->compare_price > 0)
@@ -171,7 +184,8 @@
 
 
                     <div class="col-md-12 pt-5">
-                        <nav aria-label="Page navigation example">
+                        {{ $products->withQueryString()->links() }}
+                        <!-- <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-end">
                                 <li class="page-item disabled">
                                     <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
@@ -183,7 +197,7 @@
                                     <a class="page-link" href="#">Next</a>
                                 </li>
                             </ul>
-                        </nav>
+                        </nav> -->
                     </div>
                 </div>
             </div>
@@ -205,7 +219,7 @@
         max_postfix: "+",
         prefix: "₹.",
         onFinish: function () {
-           apply_filters()
+            apply_filters()
         }
     });
 
@@ -228,7 +242,7 @@
                 brands.push($(this).val());
             }
         });
-        
+
         var url = '{{ url()->current() }}?';
 
         //Brand Filter
@@ -237,12 +251,12 @@
         }
 
         //Price Range Filter
-        url += '&price_min=' +slider.result.from+ '&price_max=' +slider.result.to;
+        url += '&price_min=' + slider.result.from + '&price_max=' + slider.result.to;
 
-       //Sorting Filter
-       url += '&sort='+$("#sort").val();
+        //Sorting Filter
+        url += '&sort=' + $("#sort").val();
 
-        window.location.href =  url;
+        window.location.href = url;
     }
 </script>
 @endsection

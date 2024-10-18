@@ -40,11 +40,21 @@
                                     <div class="mb-3"
                                         style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
                                         <label for="title">Slug</label>
-                                        <input type="text" readonly name="slug" id="slug" class="form-control"
-                                            placeholder="slug" value="{{ $product->slug }}">
+                                        <input type="text" name="slug" id="slug" class="form-control" placeholder="slug"
+                                            value="{{ $product->slug }}">
                                         <p class="error"></p>
                                     </div>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="short_description">Short Description</label>
+                                        <textarea name="short_description" id="short_description" cols="30" rows="10"
+                                            class="summernote"
+                                            placeholder="">{{ $product->short_description }}</textarea>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="description">Description</label>
@@ -53,6 +63,18 @@
                                             placeholder="Description">{{ $product->description }}</textarea>
                                     </div>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="shipping_returns"
+                                            style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">Shipping
+                                            And Returns</label>
+                                        <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10"
+                                            class="summernote"
+                                            placeholder="">{{ $product->shipping_returns }}</textarea>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -135,6 +157,7 @@
                                         <p class="error"></p>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="barcode">Barcode</label>
@@ -142,6 +165,25 @@
                                             placeholder="Barcode" value="{{ $product->barcode }}">
                                     </div>
                                 </div>
+
+                               <div class="col-md-12"
+                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                                    <div class="mb-3">
+                                        <label>Related Product</label>
+                                        <div class="mb-3">
+                                            <select multiple class="related-product w-100" name="related_products[]"
+                                                id="related_products">
+                                                @if (!empty($relatedProducts))
+                                                    @foreach ($relatedProducts as $relProduct)
+                                                        <option selected value="{{ $relProduct->id }}">{{ $relProduct->title }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <div class="custom-control custom-checkbox">
@@ -229,6 +271,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card mb-3">
                         <div class="card-body">
                             <h2 class="h4 mb-3">Featured product</h2>
@@ -242,6 +285,9 @@
                             </div>
                         </div>
                     </div>
+
+
+
                 </div>
             </div>
 
@@ -260,6 +306,21 @@
 
 @section('customJs')
 <script>
+    $('.related-product').select2({
+        ajax: {
+            url: '{{ route("product.getProducts") }}',
+            dataType: 'json',
+            tags: true,
+            multiple: true,
+            minimumInputLength: 3,
+            processResults: function (data) {
+                return {
+                    results: data.tags
+                };
+            }
+        }
+    });
+
     $("#title").change(function () {
         element = $(this);
         $("button[type='submit']").prop('disabled', true);

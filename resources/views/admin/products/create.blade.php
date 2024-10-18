@@ -43,6 +43,16 @@
                                         <p class="error"></p>
                                     </div>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="short_description">Short Description</label>
+                                        <textarea name="short_description" id="short_description" cols="30" rows="10"
+                                            class="summernote"
+                                            placeholder=""></textarea>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="description">Description</label>
@@ -50,6 +60,16 @@
                                             class="summernote" placeholder="Description"></textarea>
                                     </div>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="shipping_returns" style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">Shipping And Returns</label>
+                                        <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10"
+                                            class="summernote"
+                                            placeholder=""></textarea>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

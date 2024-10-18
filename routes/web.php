@@ -31,7 +31,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
-
+Route::get('/product/{slug}', [ShopController::class, 'product'])->name('front.product');
+Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
 Route::group(['prefix' => 'admin'], function () {
 
@@ -84,6 +85,8 @@ Route::group(['prefix' => 'admin'], function () {
         //Route::delete('/product', [ProductController::class, 'destroy'])->name('product.delete');
         //Route::delete('/admin/product-images/{id}', [ProductController::class, 'destroy'])->name('product-images.destroy');
         Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
 
         Route::get('/product-subcategories', [ProductSubCategoryController::class, 'index'])->name('product-subcategories.index');
 

@@ -148,7 +148,7 @@
                             <div class="col-md-3">
                                 <div class="card product-card">
                                     <div class="product-image position-relative">
-                                        <a href="" class="product-img">
+                                        <a href="{{ route('front.product', $product->slug) }}" class="product-img">
 
                                             <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
                                                                                                                                                                                                                                                                                                                         alt=""> -->
@@ -182,8 +182,8 @@
                                         <div class="brand-name mt-2">
                                             <h4> <span class="h4">
                                                     <a class="h4 link" href="product.php"
-                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">Brand:
-                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a>
+                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;"><h5 style="font-family:fantasy ">Brand :-
+                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a></h5>
                                                     <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
                                                 </span></h4>
                                         </div>
@@ -222,7 +222,7 @@
                             <div class="col-md-3">
                                 <div class="card product-card">
                                     <div class="product-image position-relative">
-                                        <a href="" class="product-img">
+                                        <a href="{{ route('front.product', $product->slug) }}" class="product-img">
 
                                             <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
                                                                                                                                                                                                                                                                                                                         alt=""> -->

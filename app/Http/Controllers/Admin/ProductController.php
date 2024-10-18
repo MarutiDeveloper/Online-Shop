@@ -19,7 +19,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        
+
         $products = Product::latest('id')->with('product_images');
 
         if ($request->get('keyword') != "") {
@@ -46,7 +46,7 @@ class ProductController extends Controller
         // Pass the filtered categories and brands to the view
         $data['categories'] = $categories;
         $data['brands'] = $brands;
-       
+
 
         return view('admin.products.create', $data);
     }
@@ -98,6 +98,8 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brand_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->shipping_returns = $request->shipping_returns;
+            $product->short_description = $request->short_description;
             $product->save();
 
 
@@ -170,6 +172,14 @@ class ProductController extends Controller
         // Fetch product images
         $productImages = ProductImage::where('product_id', $product->id)->get(); // Adjust as per your DB schema
 
+        
+        // Fatch Related Product
+        if ($product->related_products != '') {
+            $productArray = explode(',',$product->related_products);
+
+            $relatedProducts = Product::whereIn('id',$productArray)->get();
+        }
+
 
         // Fetch subcategories based on the product's category_id
         $subCategories = SubCategory::where('category_id', $product->category_id)->get();
@@ -179,6 +189,7 @@ class ProductController extends Controller
         $data['product'] = $product;  // Assign product to the array
         $data['subCategories'] = $subCategories;  // Assign product to the array
         $data['productImages'] = $productImages;  // Assign product to the array
+        $data['relatedProducts'] = $relatedProducts;  // Assign Related Product to the array
 
 
         // Fetch other required data (e.g., categories, brands, etc.)
@@ -188,12 +199,12 @@ class ProductController extends Controller
         $data['categories'] = $categories;  // Add categories to the array
         $data['brands'] = $brands;  // Add brands to the array
         // Return the view with the product, categories, brands, and subcategories
-        return view('admin.products.edit', compact('product', 'productImages', 'categories', 'brands', 'subCategories'));
+        return view('admin.products.edit', compact('product', 'productImages', 'categories', 'brands', 'subCategories','relatedProducts'));
     }
     public function update($id, Request $request)
     {
         // Retrieve the product using the product_id from the request
-    //$product = Product::find($request->product_id);
+        //$product = Product::find($request->product_id);
 
         $product = Product::find($id);
         // dd($request->image_array);
@@ -236,9 +247,14 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brand_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->shipping_returns = $request->shipping_returns;
+            $product->short_description = $request->short_description;
+            $product->related_products = !empty($request->related_products) 
+            ? implode(',', $request->related_products) 
+            : null;
             $product->save();
 
-
+            //related_products
             // Flash success message and return JSON response
             $request->session()->flash('success', 'Product Updated Successfully...!');
             return response()->json([
@@ -254,68 +270,68 @@ class ProductController extends Controller
         }
 
         // Initialize an array to store saved images for the response
-    //$savedImages = [];
+        //$savedImages = [];
 
-    if (!empty($request->image_array)) {
-        foreach ($request->image_array as $image_id) {
-            // Retrieve image from TempImage model
-            $tempImageInfo = TempImage::find($image_id);
+        if (!empty($request->image_array)) {
+            foreach ($request->image_array as $image_id) {
+                // Retrieve image from TempImage model
+                $tempImageInfo = TempImage::find($image_id);
 
-            if ($tempImageInfo) {
-                // Get file extension and generate new image name
-                $ext = pathinfo($tempImageInfo->name, PATHINFO_EXTENSION);
-                $imageName = $product->id . '-' . time() . '.' . $ext;
+                if ($tempImageInfo) {
+                    // Get file extension and generate new image name
+                    $ext = pathinfo($tempImageInfo->name, PATHINFO_EXTENSION);
+                    $imageName = $product->id . '-' . time() . '.' . $ext;
 
-                // Define the destination path for the image
-                $destPath = 'uploads/product/large/' . $imageName;
+                    // Define the destination path for the image
+                    $destPath = 'uploads/product/large/' . $imageName;
 
-                // Move the image from temp folder to the final destination
-                $sourcePath = public_path('temp/' . $tempImageInfo->name);
-                $finalPath = public_path($destPath);
+                    // Move the image from temp folder to the final destination
+                    $sourcePath = public_path('temp/' . $tempImageInfo->name);
+                    $finalPath = public_path($destPath);
 
-                if (File::exists($sourcePath)) {
-                    // Move the file
-                    File::move($sourcePath, $finalPath);
+                    if (File::exists($sourcePath)) {
+                        // Move the file
+                        File::move($sourcePath, $finalPath);
 
-                    // Check if the image already exists in the product_images table
-                    $productImage = ProductImage::firstOrNew(['id' => $image_id]);
+                        // Check if the image already exists in the product_images table
+                        $productImage = ProductImage::firstOrNew(['id' => $image_id]);
 
-                    // If it's a new entry, set additional fields
-                    if (!$productImage->exists) {
-                        $productImage->product_id = $product->id;
-                        $productImage->sort_order = 0; // Default sort_order
+                        // If it's a new entry, set additional fields
+                        if (!$productImage->exists) {
+                            $productImage->product_id = $product->id;
+                            $productImage->sort_order = 0; // Default sort_order
+                        }
+
+                        // Update image name and save
+                        $productImage->image = $imageName;
+                        $productImage->updated_at = now(); // Refresh updated_at timestamp
+                        $productImage->save();
+
+                        // Store the saved image details for the response
+                        $savedImages[] = [
+                            'image_id' => $productImage->id,
+                            'ImagePath' => asset('uploads/product/large/' . $imageName),
+                        ];
+                    } else {
+                        \Log::error("Source image not found: " . $sourcePath);
                     }
-
-                    // Update image name and save
-                    $productImage->image = $imageName;
-                    $productImage->updated_at = now(); // Refresh updated_at timestamp
-                    $productImage->save();
-
-                    // Store the saved image details for the response
-                    $savedImages[] = [
-                        'image_id' => $productImage->id,
-                        'ImagePath' => asset( 'uploads/product/large/' . $imageName),
-                    ];
                 } else {
-                    \Log::error("Source image not found: " . $sourcePath);
+                    \Log::error("Temp image not found for ID: " . $image_id);
                 }
-            } else {
-                \Log::error("Temp image not found for ID: " . $image_id);
             }
+
+            // Flash a success message to the session
+            $request->session()->flash('success', 'Images saved/updated successfully.');
+
+            // Return a JSON response with all saved images
+            return response()->json([
+                'status' => true,
+                'saved_images' => $savedImages,
+                'message' => 'Images saved successfully.',
+            ]);
+        } else {
+            return response()->json(['status' => false, 'message' => 'No images provided for upload.']);
         }
-
-        // Flash a success message to the session
-        $request->session()->flash('success', 'Images saved/updated successfully.');
-
-        // Return a JSON response with all saved images
-        return response()->json([
-            'status' => true,
-            'saved_images' => $savedImages,
-            'message' => 'Images saved successfully.',
-        ]);
-    } else {
-        return response()->json(['status' => false, 'message' => 'No images provided for upload.']);
-    }
 
     }
     public function destroy($id, Request $request)
@@ -350,5 +366,29 @@ class ProductController extends Controller
         // Return a JSON response
         $request->session()->flash('success', 'Product Deleted Successfully...!');
         return response()->json(['status' => true, 'message' => 'Product deleted successfully!']);
+    }
+
+    public function getProducts(Request $request)
+    {
+
+        $tempProduct = []; // Initialize as an empty array
+
+        if (!empty($request->term)) {
+            $products = Product::where('title', 'like', '%' . $request->term . '%')->get();
+
+            if ($products->isNotEmpty()) {
+                foreach ($products as $product) {
+                    $tempProduct[] = [
+                        'id' => $product->id,
+                        'text' => $product->title
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'tags' => $tempProduct,
+            'status' => true
+        ]);
     }
 }

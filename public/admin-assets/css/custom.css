@@ -25,3 +25,6 @@
   font-size: 2em; /* Adjust size as needed */
   color: #ff5733; /* Change to your desired color */
 }
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+  color:#000;
+}

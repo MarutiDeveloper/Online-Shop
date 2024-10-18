@@ -69,7 +69,8 @@ class ShopController extends Controller
         }
 
 
-        $products = $products->get();
+        $products = $products->paginate(6);
+
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['products'] = $products;
@@ -82,5 +83,18 @@ class ShopController extends Controller
 
 
         return view('front.shop', $data);
+    }
+
+    public function product($slug){
+        //$slug;
+        $product = Product::where('slug',$slug)->with('product_images')->first();
+        //dd($product);
+        if ($product == null) {
+            abort(404);
+        }
+
+        $data['product'] = $product;
+
+        return view('front.product',$data);
     }
 }
