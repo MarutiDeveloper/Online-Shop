@@ -74,7 +74,7 @@
                                                                     </td>
                                                                     <td><a href="#">{{ $product->title }}</a></td>
                                                                     <td>₹ {{ $product->price }}</td>
-                                                                    <td>{{ $product->qty }} left in Stock</td>
+                                                                    <td>{{ $product->qty }} </td>
                                                                     <td>{{ $product->sku }}</td>
                                                                     <td>
                                                                         @if ($product->status == 1)

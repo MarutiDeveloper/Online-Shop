@@ -19,6 +19,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        
         $products = Product::latest('id')->with('product_images');
 
         if ($request->get('keyword') != "") {
@@ -191,6 +192,8 @@ class ProductController extends Controller
     }
     public function update($id, Request $request)
     {
+        // Retrieve the product using the product_id from the request
+    //$product = Product::find($request->product_id);
 
         $product = Product::find($id);
         // dd($request->image_array);
@@ -249,6 +252,70 @@ class ProductController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
+
+        // Initialize an array to store saved images for the response
+    //$savedImages = [];
+
+    if (!empty($request->image_array)) {
+        foreach ($request->image_array as $image_id) {
+            // Retrieve image from TempImage model
+            $tempImageInfo = TempImage::find($image_id);
+
+            if ($tempImageInfo) {
+                // Get file extension and generate new image name
+                $ext = pathinfo($tempImageInfo->name, PATHINFO_EXTENSION);
+                $imageName = $product->id . '-' . time() . '.' . $ext;
+
+                // Define the destination path for the image
+                $destPath = 'uploads/product/large/' . $imageName;
+
+                // Move the image from temp folder to the final destination
+                $sourcePath = public_path('temp/' . $tempImageInfo->name);
+                $finalPath = public_path($destPath);
+
+                if (File::exists($sourcePath)) {
+                    // Move the file
+                    File::move($sourcePath, $finalPath);
+
+                    // Check if the image already exists in the product_images table
+                    $productImage = ProductImage::firstOrNew(['id' => $image_id]);
+
+                    // If it's a new entry, set additional fields
+                    if (!$productImage->exists) {
+                        $productImage->product_id = $product->id;
+                        $productImage->sort_order = 0; // Default sort_order
+                    }
+
+                    // Update image name and save
+                    $productImage->image = $imageName;
+                    $productImage->updated_at = now(); // Refresh updated_at timestamp
+                    $productImage->save();
+
+                    // Store the saved image details for the response
+                    $savedImages[] = [
+                        'image_id' => $productImage->id,
+                        'ImagePath' => asset( 'uploads/product/large/' . $imageName),
+                    ];
+                } else {
+                    \Log::error("Source image not found: " . $sourcePath);
+                }
+            } else {
+                \Log::error("Temp image not found for ID: " . $image_id);
+            }
+        }
+
+        // Flash a success message to the session
+        $request->session()->flash('success', 'Images saved/updated successfully.');
+
+        // Return a JSON response with all saved images
+        return response()->json([
+            'status' => true,
+            'saved_images' => $savedImages,
+            'message' => 'Images saved successfully.',
+        ]);
+    } else {
+        return response()->json(['status' => false, 'message' => 'No images provided for upload.']);
+    }
 
     }
     public function destroy($id, Request $request)

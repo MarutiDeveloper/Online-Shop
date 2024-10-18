@@ -73,7 +73,8 @@
                                     <div class="card">
                                         <input type="hidden" name="image_array[]" value="{{ $image->id }}">
                                         <img src="{{ asset('uploads/product/large' . $image->image) }}" class="card-img-top"
-                                            alt="" onerror="this.onerror=null; this.src='path/to/default-image.jpg';">
+                                            alt=""
+                                            onerror="this.onerror=null; this.src='{{ asset('admin-assets/img/default-150x150.png') }}';">
                                         <div class="card-body">
                                             <a href="javascript:void(0)" onclick="deleteImage({{ $image->id }})"
                                                 class="btn btn-danger">Delete</a>
@@ -373,44 +374,44 @@
     // Function to generate the HTML template for an image card
     function createImageCard(response) {
         return `
-                <div class="col-md-3" id="image-row-${response.image_id}">
-                    <div class="card">
-                        <input type="hidden" name="image_array[]" value="${response.image_id}">
-                        <img src="${response.ImagePath}" class="card-img-top" alt="Image"
-                             onerror="this.onerror=null; this.src='/images/default-image.jpg';">
-                        <div class="card-body">
-                            <button type="button" class="btn btn-danger" onclick="deleteImage(${response.image_id})">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
+        <div class="col-md-3" id="image-row-${response.image_id}">
+            <div class="card">
+                <input type="hidden" name="image_array[]" value="${response.image_id}">
+                <img src="${response.ImagePath}" class="card-img-top" alt="Image"
+                     onerror="this.onerror=null; this.src='{{ asset('admin-assets/img/default-150x150.png') }}';">
+                <div class="card-body">
+                    <button type="button" class="btn btn-danger" onclick="deleteImage(${response.image_id})">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>`;
     }
 
     // Function to delete an image card and optionally remove it from the server
     function deleteImage(id) {
-    if (confirm('Are you sure you want to delete this image?')) {
-        $.ajax({
-            url: "{{ route('product-images.destroy') }}",  // Ensure the correct route with the dynamic ID
-            type: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                console.log('Delete Response:', response); // Log the response to debug
-                if (response.success) {
-                    $(`#image-row-${id}`).remove();  // Remove the card from the gallery
-                } else {
-                    alert(response.message || 'Failed to delete image. Please try again.');
+        if (confirm('Are you sure you want to delete this image?')) {
+            $.ajax({
+                url: "{{ route('product-images.destroy') }}",  // Ensure the correct route with the dynamic ID
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    console.log('Delete Response:', response); // Log the response to debug
+                    if (response.success) {
+                        $(`#image-row-${id}`).remove();  // Remove the card from the gallery
+                    } else {
+                        alert(response.message || 'Failed to delete image. Please try again.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Delete Error:', error); // Log error to debug
+                    alert('An error occurred. Please try again.');
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Delete Error:', error); // Log error to debug
-                alert('An error occurred. Please try again.');
-            }
-        });
+            });
+        }
     }
-}
 
 </script>
 

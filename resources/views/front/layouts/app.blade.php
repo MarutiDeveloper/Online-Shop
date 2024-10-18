@@ -33,11 +33,14 @@
     <meta name="twitter:card" content="summary_large_image" />
 
 
-
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/slick.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/slick-theme.css') }}" />
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/video-js.css') }}" />  -->
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/style.css') }}" />
+    <!-- <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/ion.rangeSlider.css') }}" /> -->
+     <!-- <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/ion.rangeSlider.min.css') }}" />  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/> 
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -240,7 +243,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <p class="mb-0">© Copyright 2024 Amazing Shop. All Rights Reserved</p>
+                        <p class="mb-0">© Copyright 2024 Online Shop All Rights Reserved</p>
                     </div>
                 </div>
             </div>
@@ -254,6 +257,13 @@
 
     <script src="{{ asset('front-assets/js/lazyload.17.6.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/slick.min.js') }}"></script>
+    <!-- <script src="{{ asset('front-assets/js/ion.rangeSlider.min.js') }}"></script>  -->
+    <!--jQuery-->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+    
+    <!--Plugin JavaScript file-->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script> 
+    
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
 
     <script>
@@ -270,6 +280,8 @@
             }
         }
     </script>
+    @yield('customJs')
+    
 </body>
 
 </html>

@@ -110,31 +110,25 @@
         <div class="row pb-3">
             @if (getCategories()->isNotEmpty())
                 @foreach (getCategories() as $category)
-
-                    <div class="col-lg-3">
-                        <div class="cat-card">
-                            <div class=" shadow-lg left">
-                                @if ($category->image != "")
-                                    <img src="{{ asset('uploads/category/' . $category->image) }}" alt="Category Image"
-                                        class="img-fluid category-image rounded-start">
-                                @endif
-                                <!-- <img src="{{ asset('front-assets/images/cat-1.jpg') }}" alt="" class="img-fluid"> -->
-                            </div>
-                            <div class=" shadow-lg right">
-                                <div class="cat-data">
-                                    <h2 style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
-                                        {{ $category->name }}
-                                    </h2>
-                                    <!-- <p>100 Products</p> -->
-                                </div>
+                    <div class="col-md-4 mb-3"> <!-- Adjust column size as needed -->
+                        <div class="card" style="width: 100%;"> <!-- Set width to 100% for responsiveness -->
+                            @if ($category->image != "")
+                                <img src="{{ asset('uploads/category/' . $category->image) }}" class="card-img-top"
+                                    alt="Category Image">
+                            @else
+                                <img src="{{ asset('front-assets/images/default-image.jpg') }}" alt="Default Category Image"
+                                    class="card-img-top">
+                            @endif
+                            <div class="card-body">
+                                <h5 class="fw-bold" style="font-family: 'Times New Roman', Times, serif;">
+                                    {{ $category->name }}
+                                </h5>
+                                <!-- <p>100 Products</p> -->
                             </div>
                         </div>
                     </div>
                 @endforeach
-
             @endif
-
-
         </div>
     </div>
 </section>
@@ -157,7 +151,7 @@
                                         <a href="" class="product-img">
 
                                             <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
-                                                                                                                        alt=""> -->
+                                                                                                                                                                                                                                                                                                                        alt=""> -->
 
                                             @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
                                                 <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}" width="50"
@@ -179,15 +173,26 @@
                                         </div>
                                     </div>
                                     <div class="card-body text-center mt-3"
-                                        style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
-                                        <a class="h4 link" href="product.php"
-                                            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">{{ $product->title }}</a>
+                                        style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">
+                                        <a class="h4 link" href="{{ route('front.home', $product->id) }}"
+                                            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                            {{ $product->title }}
+                                        </a>
+
+                                        <div class="brand-name mt-2">
+                                            <h4> <span class="h4">
+                                                    <a class="h4 link" href="product.php"
+                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">Brand:
+                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a>
+                                                    <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
+                                                </span></h4>
+                                        </div>
+
                                         <div class="price mt-2">
                                             <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
                                             @if ($product->compare_price > 0)
                                                 <span class="h6 text-underline"><del>₹.{{ $product->compare_price }}</del></span>
                                             @endif
-
                                         </div>
                                     </div>
                                 </div>
@@ -220,7 +225,7 @@
                                         <a href="" class="product-img">
 
                                             <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
-                                                                                                                        alt=""> -->
+                                                                                                                                                                                                                                                                                                                        alt=""> -->
 
                                             @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
                                                 <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}" width="50"
@@ -245,6 +250,17 @@
                                         style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
                                         <a class="h4 link" href="product.php"
                                             style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">{{ $product->title }}</a>
+
+
+                                        <div class="brand-name mt-2">
+                                            <h4> <span class="h4">
+                                                    <a class="h4 link" href="product.php"
+                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">Brand:
+                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a>
+                                                    <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
+                                                </span></h4>
+                                        </div>
+
                                         <div class="price mt-2">
                                             <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
                                             @if ($product->compare_price > 0)

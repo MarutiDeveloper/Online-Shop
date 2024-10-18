@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\category;
 use Intervention\Image\Facades\Image; // Make sure to import the Image facade
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class CategoryController extends Controller
 {
@@ -56,10 +56,10 @@ class CategoryController extends Controller
                     $ext = end($extArray); // Use end() to get the last element (file extension)
 
                     $newImageName = $category->id . '.' . $ext;
+                    $newImageName = $category->id . '-' . time() . '.' . $ext; // Format: category_id-timestamp.extension
                     $sPath = public_path('temp/' . $tempImage->name);
                     $dPath = public_path('uploads/category/' . $newImageName); // Fixed the way to concatenate new image name
 
-               
                     // Ensure the temp file exists before copying
                     if (file_exists($sPath)) {
                         File::copy($sPath, $dPath);
@@ -92,7 +92,7 @@ class CategoryController extends Controller
     }
     public function edit($categoryId, Request $request)
     {
-       
+
         $category = category::find($categoryId);
         if (empty($category)) {
             return redirect()->route('categories.index');
@@ -115,7 +115,7 @@ class CategoryController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-           'slug' => 'required|unique:categories,slug,' . $category->id . ',id',
+            'slug' => 'required|unique:categories,slug,' . $category->id . ',id',
         ]);
 
         if ($validator->passes()) {
@@ -136,14 +136,14 @@ class CategoryController extends Controller
                     $extArray = explode('.', $tempImage->name);
                     $ext = end($extArray); // Use end() to get the last element (file extension)
 
-                    $newImageName = $category->id .'-'.time(). '.' . $ext;
+                    $newImageName = $category->id . '-' . time() . '.' . $ext;
                     $sPath = public_path('temp/' . $tempImage->name);
                     $dPath = public_path('uploads/category/' . $newImageName); // Fixed the way to concatenate new image name
 
                     // Ensure the temp file exists before copying
                     if (file_exists($sPath)) {
                         File::copy($sPath, $dPath);
-                        
+
                     } else {
                         // Handle the case where the source file doesn't exist
                         // You might want to log an error or return a response
@@ -158,7 +158,7 @@ class CategoryController extends Controller
                 $category->save();
 
                 // Delete old Images Here....
-                File::delete(public_path().'/uploads/category/'.$oldImage);
+                File::delete(public_path() . '/uploads/category/' . $oldImage);
             }
 
             $request->session()->flash('success', 'Category Updated Successfully....!');
@@ -177,7 +177,7 @@ class CategoryController extends Controller
     public function destroy($categoryId, Request $request)
     {
         $category = Category::find($categoryId);
-        if (empty( $category)) {
+        if (empty($category)) {
             $request->session()->flash('error', 'Category Not Found...!');
             return response()->json([
                 'status' => true,
@@ -186,7 +186,7 @@ class CategoryController extends Controller
             //return redirect()->route('categories.index');
         }
 
-        File::delete(public_path().'/uploads/category/'.$category->image);
+        File::delete(public_path() . '/uploads/category/' . $category->image);
 
         $category->delete();
 

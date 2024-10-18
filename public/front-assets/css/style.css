@@ -62,3 +62,8 @@
     color: #007bff;     /* Optional: Add a color */
     letter-spacing: 1px; /* Adds some spacing between characters */
 }
+.cat-card {
+    border: 1px solid #dee2e6; /* Optional: add a border */
+    border-radius: 0.5rem; /* Optional: add border radius */
+    overflow: hidden; /* To round corners properly */
+}
