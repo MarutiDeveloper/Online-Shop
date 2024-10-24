@@ -72,9 +72,9 @@
 						<!-- /.col -->
 					</div>
 				</form>
-				<p class="mb-1 mt-3 text-center">
+				<!-- <p class="mb-1 mt-3 text-center">
 					<a href="forgot-password.html" class="text-center">I forgot my password</a>
-				</p>
+				</p> --><br>
 				<a href="{{ route('admin.registration') }}">
 					<p class="text-center"> Don't have a Account !! Register Here...!</p>
 				</a>

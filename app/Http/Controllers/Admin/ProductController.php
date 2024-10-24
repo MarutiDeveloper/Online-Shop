@@ -100,6 +100,9 @@ class ProductController extends Controller
             $product->is_featured = $request->is_featured;
             $product->shipping_returns = $request->shipping_returns;
             $product->short_description = $request->short_description;
+            $product->related_products = !empty($request->related_products) 
+            ? implode(',', $request->related_products) 
+            : null;
             $product->save();
 
 
@@ -173,33 +176,33 @@ class ProductController extends Controller
         $productImages = ProductImage::where('product_id', $product->id)->get(); // Adjust as per your DB schema
 
         
-        // Fatch Related Product
-        if ($product->related_products != '') {
-            $productArray = explode(',',$product->related_products);
+      // Fetch Related Products
+$relatedProducts = []; // Initialize as an empty array
 
-            $relatedProducts = Product::whereIn('id',$productArray)->get();
-        }
+if (!empty($product->related_products)) {
+    $productArray = explode(',', $product->related_products);
+    $relatedProducts = Product::whereIn('id', $productArray)->with('product_images')->get();
+}
 
+// Fetch Subcategories based on the product's category_id
+$subCategories = SubCategory::where('category_id', $product->category_id)->get();
 
-        // Fetch subcategories based on the product's category_id
-        $subCategories = SubCategory::where('category_id', $product->category_id)->get();
+// Fetch other required data (e.g., categories, brands, etc.)
+$categories = Category::orderBy('name', 'ASC')->get();
+$brands = Brand::orderBy('name', 'ASC')->get();
 
-        // Debugging output
-        //dd($subCategories); // Remove this line in production code
-        $data['product'] = $product;  // Assign product to the array
-        $data['subCategories'] = $subCategories;  // Assign product to the array
-        $data['productImages'] = $productImages;  // Assign product to the array
-        $data['relatedProducts'] = $relatedProducts;  // Assign Related Product to the array
+// Prepare data for the view
+$data = [
+    'product' => $product,          // Assign product to the array
+    'subCategories' => $subCategories, // Assign subcategories to the array
+    'productImages' => $productImages, // Assign product images to the array
+    'relatedProducts' => $relatedProducts, // Assign related products to the array
+    'categories' => $categories,    // Add categories to the array
+    'brands' => $brands,            // Add brands to the array
+];
 
-
-        // Fetch other required data (e.g., categories, brands, etc.)
-        $categories = Category::orderBy('name', 'ASC')->get();
-        $brands = Brand::orderBy('name', 'ASC')->get();
-
-        $data['categories'] = $categories;  // Add categories to the array
-        $data['brands'] = $brands;  // Add brands to the array
-        // Return the view with the product, categories, brands, and subcategories
-        return view('admin.products.edit', compact('product', 'productImages', 'categories', 'brands', 'subCategories','relatedProducts'));
+// Return the view with the necessary data
+return view('admin.products.edit', $data);
     }
     public function update($id, Request $request)
     {

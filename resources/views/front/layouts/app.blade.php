@@ -32,19 +32,23 @@
     <meta name="twitter:image:alt" content="" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/slick.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/slick-theme.css') }}" />
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/video-js.css') }}" />  -->
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/style.css') }}" />
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/ion.rangeSlider.css') }}" /> -->
-     <!-- <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/ion.rangeSlider.min.css') }}" />  -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/> 
+    <!-- <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/ion.rangeSlider.min.css') }}" />  -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" />
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&family=Raleway:ital,wght@0,400;0,600;0,800;1,200&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;700;900&display=swap"
         rel="stylesheet">
@@ -104,7 +108,7 @@
     <header class="bg-dark">
         <div class="container" style="font-family: Georgia, 'Times New Roman', Times, serif;">
             <nav class="navbar navbar-expand-xl" id="navbar">
-                <a href="index.php" class="text-decoration-none mobile-logo">
+                <a href="{{ route('front.home') }}" class="text-decoration-none mobile-logo">
                     <span class="h2 text-uppercase text-primary bg-dark">Online</span>
                     <span class="h2 text-uppercase text-white px-2">SHOP</span>
                 </a>
@@ -129,7 +133,9 @@
                                     @if ($category->sub_category->isNotEmpty())
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             @foreach ($category->sub_category as $subCategory)
-                                                <li><a class="dropdown-item nav-link" href="{{ route('front.shop', [ $category->slug,$subCategory->slug]) }}">{{ $subCategory->name }}</a></li>
+                                                <li><a class="dropdown-item nav-link"
+                                                        href="{{ route('front.shop', [$category->slug, $subCategory->slug]) }}">{{ $subCategory->name }}</a>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     @endif
@@ -184,7 +190,7 @@
                     </ul>
                 </div>
                 <div class="right-nav py-0">
-                    <a href="cart.php" class="ml-3 d-flex pt-2">
+                    <a href="{{ route('front.cart') }}" class="ml-3 d-flex pt-2">
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
@@ -197,16 +203,29 @@
     <footer class="bg-dark text-light mt-5">
         <div class="container pb-5 pt-3">
             <div class="row">
-                <!-- Get In Touch Section -->
+                <!-- Get In Touch Section (With Visiting Card) -->
                 <div class="col-md-4">
-                    <div class="footer-card mb-4">
+                    <div class="footer-card mb-3">
                         <h3 class="footer-title">Get In Touch</h3>
-                        <p>
-                            No dolore ipsum accusam no lorem. <br>
-                            123 Street, New York, USA <br>
-                            <a href="mailto:example@example.com" class="footer-link">example@example.com</a><br>
-                            <a href="tel:0000000000" class="footer-link">000 000 0000</a>
-                        </p>
+
+                        <!-- Visiting Card Section -->
+                        <div class="visiting-card bg-dark text-light p-3 mt-4"
+                            style="width: 100%; border-radius: 10px;">
+                            <h4 class="company-name mb-3" style="color: #f8f9fa; font-size: 18px;">
+                                <!-- Logo Image -->
+                                <!-- <img src="path/to/your-logo.png" 
+                                    style="height: 40px; vertical-align: middle;"> -->
+
+                                <!-- Company Name -->
+                                <i class="fas fa-shopping-cart text-primary h3"></i> 
+                                <p class="footer-link d-inline-block" style="margin-left: 10px;">Online Shop</p>
+                            </h4>
+                                <p style="margin: 0;">123 Street, New York, USA</p>
+                            <p style="margin: 0;">Email: <a href="mailto:example@example.com"
+                                    class="footer-link">example@example.com</a></p>
+                            <p style="margin: 0;">Phone: <a href="tel:0000000000" class="footer-link">000 000 0000</a>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -259,11 +278,13 @@
     <script src="{{ asset('front-assets/js/slick.min.js') }}"></script>
     <!-- <script src="{{ asset('front-assets/js/ion.rangeSlider.min.js') }}"></script>  -->
     <!--jQuery-->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     <!--Plugin JavaScript file-->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script> 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
 
     <script>
@@ -279,9 +300,31 @@
                 navbar.classList.remove("sticky");
             }
         }
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        function addToCart(id) {
+            $.ajax({
+                url: '{{ route("front.addToCart") }}',
+                type: 'post',
+                data: { id: id },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status == true) {
+                        window.location.href = "{{ route('front.cart') }}";
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
     </script>
     @yield('customJs')
-    
+
 </body>
 
 </html>

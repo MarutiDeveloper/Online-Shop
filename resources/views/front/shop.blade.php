@@ -130,28 +130,26 @@
                                                         $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
                                                     @endphp
 
-                                                    <div class="col-md-4">
+                                                    <!-- New Updated Code -->
+                                                    <div class="col-6 col-sm-4 col-md-4">
                                                         <div class="card product-card">
                                                             <div class="product-image position-relative">
-
-
-                                                                <!-- <a href="" class="product-img"><img class="card-img-top" src="images/product-1.jpg"
-                                                                                                                                                                                                                                                                                                                                                                        alt=""></a> -->
-                                                                <a href="#" class="product-img">
+                                                                <a href="{{ route('front.product', $product->slug) }}" class="product-img">
                                                                     @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
                                                                         <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}"
-                                                                            width="50"
+                                                                            style="width: 100%; height: 200px; object-fit: cover;"
                                                                             onerror="this.onerror=null; this.src='{{ asset(path: 'admin-assets/img/default-150x150.png') }}';"
                                                                             alt="Product Image" />
                                                                     @else
                                                                         <img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}"
-                                                                            width="50" alt="Default Image" />
+                                                                            style="width: 100%; height: 200px; object-fit: cover;" alt="Default Image" />
                                                                     @endif
                                                                 </a>
                                                                 <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                                                 <div class="product-action">
-                                                                    <a class="btn btn-dark" href="#">
+                                                                    <a class="btn btn-dark" href="javascript:void(0);"
+                                                                        onclick="addToCart({{ $product->id }});">
                                                                         <i class="fa fa-shopping-cart"></i> Add To Cart
                                                                     </a>
                                                                 </div>
@@ -160,25 +158,21 @@
                                                                 <a class="h6 link" href="product.php">{{ $product->title }}</a>
 
                                                                 <a class="h5 link" href="product.php"
-                                                                    style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
-                                                                    <h5 style="font-family:fantasy ">Brand :-
-                                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}
-                                                                </a></h5>
-                                                                <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
-                                                                </span></h4>
-
-
+                                                                    style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                                                    <h5 style="font-family: fantasy;">Brand :-
+                                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</h5>
+                                                                </a>
 
                                                                 <div class="price mt-2">
                                                                     <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
                                                                     @if ($product->compare_price > 0)
                                                                         <span class="h6 text-underline"><del>₹.{{ $product->compare_price }}</del></span>
                                                                     @endif
-
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+
                                     @endforeach
                     @endif
 

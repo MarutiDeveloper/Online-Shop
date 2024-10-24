@@ -114,10 +114,12 @@
                         <div class="card" style="width: 100%;"> <!-- Set width to 100% for responsiveness -->
                             @if ($category->image != "")
                                 <img src="{{ asset('uploads/category/' . $category->image) }}" class="card-img-top"
-                                    alt="Category Image">
+                                    alt="Category Image" style="height: 200px; object-fit: cover;">
+                                <!-- Adjust height and maintain aspect ratio -->
                             @else
                                 <img src="{{ asset('front-assets/images/default-image.jpg') }}" alt="Default Category Image"
-                                    class="card-img-top">
+                                    class="card-img-top" style="height: 200px; object-fit: cover;">
+                                <!-- Adjust height and maintain aspect ratio -->
                             @endif
                             <div class="card-body">
                                 <h5 class="fw-bold" style="font-family: 'Times New Roman', Times, serif;">
@@ -145,29 +147,24 @@
                                 $productImage = $product->product_images->first();
                                 $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
                             @endphp
-                            <div class="col-md-3">
-                                <div class="card product-card">
+                            <div class="col-md-3 mb-3"> <!-- Added mb-3 for consistent spacing between cards -->
+                                <div class="card product-card" style="width: 100%;"> <!-- Ensuring card takes full width -->
                                     <div class="product-image position-relative">
                                         <a href="{{ route('front.product', $product->slug) }}" class="product-img">
-
-                                            <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
-                                                                                                                                                                                                                                                                                                                        alt=""> -->
-
-                                            @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
-                                                <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}" width="50"
-                                                    onerror="this.onerror=null; this.src='{{ asset(path: 'admin-assets/img/default-150x150.png') }}';"
-                                                    alt="Product Image" />
+                                            @if (!empty($productImage) && file_exists(public_path($imagePath)))
+                                                <img class="card-img-top" src="{{ asset($imagePath) }}?v={{ time() }}" alt="Product Image"
+                                                    style="height: 200px; object-fit: cover; width: 100%;">
+                                                <!-- Fixed size and responsive -->
                                             @else
                                                 <img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}"
-                                                    width="50" alt="Default Image" />
+                                                    alt="Default Image" style="height: 200px; object-fit: cover; width: 100%;">
+                                                <!-- Same styling for default image -->
                                             @endif
-
-
                                         </a>
                                         <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                         <div class="product-action">
-                                            <a class="btn btn-dark" href="#">
+                                            <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{ $product->id }});">
                                                 <i class="fa fa-shopping-cart"></i> Add To Cart
                                             </a>
                                         </div>
@@ -180,12 +177,13 @@
                                         </a>
 
                                         <div class="brand-name mt-2">
-                                            <h4> <span class="h4">
-                                                    <a class="h4 link" href="product.php"
-                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;"><h5 style="font-family:fantasy ">Brand :-
-                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a></h5>
-                                                    <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
-                                                </span></h4>
+                                            <h4>
+                                                <a class="h4 link" href="product.php"
+                                                    style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                                    <h5 style="font-family:fantasy ">Brand :-
+                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</h5>
+                                                </a>
+                                            </h4>
                                         </div>
 
                                         <div class="price mt-2">
@@ -198,11 +196,7 @@
                                 </div>
                             </div>
                     @endforeach
-
             @endif
-
-
-
         </div>
     </div>
 </section>
@@ -213,68 +207,62 @@
             <h2>Latest Produsts</h2>
         </div>
         <div class="row pb-3">
-            @if ($latestProducts->isNotEmpty())
-                    @foreach ($latestProducts as $product)
-                            @php
-                                $productImage = $product->product_images->first();
-                                $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
-                            @endphp
-                            <div class="col-md-3">
-                                <div class="card product-card">
-                                    <div class="product-image position-relative">
-                                        <a href="{{ route('front.product', $product->slug) }}" class="product-img">
+    @if ($latestProducts->isNotEmpty())
+        @foreach ($latestProducts as $product)
+            @php
+                $productImage = $product->product_images->first();
+                $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
+            @endphp
+            <div class="col-md-3 mb-3"> <!-- Added mb-3 for spacing between cards -->
+                <div class="card product-card" style="width: 100%;"> <!-- Ensuring card takes full width -->
+                    <div class="product-image position-relative">
+                        <a href="{{ route('front.product', $product->slug) }}" class="product-img">
+                            @if (!empty($productImage) && file_exists(public_path($imagePath)))
+                                <img class="card-img-top" src="{{ asset($imagePath) }}?v={{ time() }}"
+                                     alt="Product Image" 
+                                     style="height: 200px; object-fit: cover; width: 100%;"> <!-- Fixed size and responsive -->
+                            @else
+                                <img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}"
+                                     alt="Default Image" 
+                                     style="height: 200px; object-fit: cover; width: 100%;"> <!-- Same styling for default image -->
+                            @endif
+                        </a>
+                        <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
-                                            <!-- <img class="card-img-top" src="{{ asset('front-assets/images/product-1.jpg') }}"
-                                                                                                                                                                                                                                                                                                                        alt=""> -->
+                        <div class="product-action">
+                            <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{ $product->id }});">
+                                <i class="fa fa-shopping-cart"></i> Add To Cart
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body text-center mt-3"
+                         style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">
+                        <a class="h4 link" href="{{ route('front.product', $product->slug) }}"
+                           style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                            {{ $product->title }}
+                        </a>
 
-                                            @if (!empty($productImage) && file_exists(filename: public_path(path: $imagePath)))
-                                                <img class="card-img-top" src="{{ asset(path: $imagePath) }}?v={{ time() }}" width="50"
-                                                    onerror="this.onerror=null; this.src='{{ asset(path: 'admin-assets/img/default-150x150.png') }}';"
-                                                    alt="Product Image" />
-                                            @else
-                                                <img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}"
-                                                    width="50" alt="Default Image" />
-                                            @endif
+                        <div class="brand-name mt-2">
+                            <h4>
+                                <a class="h4 link" href="{{ route('front.product', $product->slug) }}"
+                                   style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                   Brand: {{ $product->brand ? $product->brand->name : 'N/A' }}
+                                </a>
+                            </h4>
+                        </div>
 
-
-                                        </a>
-                                        <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
-
-                                        <div class="product-action">
-                                            <a class="btn btn-dark" href="#">
-                                                <i class="fa fa-shopping-cart"></i> Add To Cart
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="card-body text-center mt-3"
-                                        style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
-                                        <a class="h4 link" href="product.php"
-                                            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">{{ $product->title }}</a>
-
-
-                                        <div class="brand-name mt-2">
-                                            <h4> <span class="h4">
-                                                    <a class="h4 link" href="product.php"
-                                                        style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">Brand:
-                                                        {{ $product->brand ? $product->brand->name : 'N/A' }}</a>
-                                                    <!-- Brand: {{ $product->brand ? $product->brand->name : 'N/A' }} -->
-                                                </span></h4>
-                                        </div>
-
-                                        <div class="price mt-2">
-                                            <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
-                                            @if ($product->compare_price > 0)
-                                                <span class="h6 text-underline"><del>₹.{{ $product->compare_price }}</del></span>
-                                            @endif
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    @endforeach
-
-            @endif
-        </div>
+                        <div class="price mt-2">
+                            <span class="h5"><strong>₹.{{ $product->price }}</strong></span>
+                            @if ($product->compare_price > 0)
+                                <span class="h6 text-underline"><del>₹.{{ $product->compare_price }}</del></span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endif
+</div>
     </div>
 </section>
 @endsection

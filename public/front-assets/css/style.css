@@ -67,3 +67,24 @@
     border-radius: 0.5rem; /* Optional: add border radius */
     overflow: hidden; /* To round corners properly */
 }
+@media (max-width: 576px) {
+    .product-card {
+        margin-bottom: 15px; /* Add spacing between cards */
+    }
+
+    .card-body {
+        padding: 10px; /* Reduce padding in mobile view */
+    }
+
+    .product-action {
+        margin-top: 10px; /* Ensure action buttons are well spaced */
+    }
+
+    .price {
+        font-size: 1rem; /* Adjust font size for price on mobile */
+    }
+
+    .h6.link {
+        font-size: 1.1rem; /* Adjust font size for product title on mobile */
+    }
+}

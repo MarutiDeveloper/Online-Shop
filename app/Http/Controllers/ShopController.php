@@ -39,32 +39,32 @@ class ShopController extends Controller
 
         if (!empty($request->get('brand'))) {
             $brandsArray = explode(',', $request->get('brand'));
-            $products = $products->whereIn('brand_id',$brandsArray);
+            $products = $products->whereIn('brand_id', $brandsArray);
         }
 
         if ($request->get('price_max') != '' && $request->get('price_min') != '') {
 
             if ($request->get('price_max') == 10000) {
-                $products = $products->whereBetween('price',[intval($request->get('price_min')),1000000]);
-            }else {
-                $products = $products->whereBetween('price',[intval($request->get('price_min')),intval($request->get('price_max'))]);
+                $products = $products->whereBetween('price', [intval($request->get('price_min')), 1000000]);
+            } else {
+                $products = $products->whereBetween('price', [intval($request->get('price_min')), intval($request->get('price_max'))]);
             }
-           
+
         }
 
         //$products = Product::orderBy('id', 'DESC')->where('status', 1)->get();
 
-       
+
         if ($request->get('sort') != '') {
             if ($request->get('sort') == 'latest') {
                 // $products = $products->orderBy('id', 'DESC');
                 $products = $products->orderBy('id', 'DESC');
-            }elseif ($request->get('sort') == 'price_asc') {
+            } elseif ($request->get('sort') == 'price_asc') {
                 $products = $products->orderBy('price', 'ASC');
-            }else{
+            } else {
                 $products = $products->orderBy('price', 'DESC');
             }
-        }else {
+        } else {
             $products = $products->orderBy('id', 'DESC');
         }
 
@@ -85,16 +85,28 @@ class ShopController extends Controller
         return view('front.shop', $data);
     }
 
-    public function product($slug){
+    public function product($slug)
+    {
         //$slug;
-        $product = Product::where('slug',$slug)->with('product_images')->first();
+        $product = Product::where('slug', $slug)->with('product_images')->first();
         //dd($product);
         if ($product == null) {
             abort(404);
         }
 
-        $data['product'] = $product;
+        // Fetch Related Products
+        $relatedProducts = []; // Initialize as an empty array
 
-        return view('front.product',$data);
+        if (!empty($product->related_products)) {
+            $productArray = explode(',', $product->related_products);
+            $relatedProducts = Product::whereIn('id', $productArray)->get();
+        }
+
+        $data = [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts, // Assign Related Products to the array
+        ];
+
+        return view('front.product', $data);
     }
 }

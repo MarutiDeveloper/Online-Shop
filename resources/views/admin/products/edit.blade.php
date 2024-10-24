@@ -21,6 +21,7 @@
     <!-- Default box -->
     <form action="{{ route('product-images.update') }}" class="dropzone" method="post" name="productForm"
         id="productForm">
+        @csrf
         <!-- <form action="{{ route('product-images.update') }}" class="dropzone" id="image-dropzone"> -->
         <div class="container-fluid">
             <div class="row">
@@ -91,21 +92,22 @@
                     <div class="row" id="product-gallery">
                         @if ($productImages->isNotEmpty())
                             @foreach ($productImages as $image)
-                                <div class="col-md-3" id="image-row-{{ $image->id }}">
+                                <div class="col-md-3 mb-4" id="image-row-{{ $image->id }}">
                                     <div class="card">
                                         <input type="hidden" name="image_array[]" value="{{ $image->id }}">
-                                        <img src="{{ asset('uploads/product/large' . $image->image) }}" class="card-img-top"
-                                            alt=""
+                                        <img src="{{ asset('uploads/product/large/' . $image->image) }}" class="card-img-top"
+                                            alt="Product Image"
                                             onerror="this.onerror=null; this.src='{{ asset('admin-assets/img/default-150x150.png') }}';">
-                                        <div class="card-body">
-                                            <a href="javascript:void(0)" onclick="deleteImage({{ $image->id }})"
-                                                class="btn btn-danger">Delete</a>
+                                        <div class="card-body text-center">
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="deleteImage({{ $image->id }})">
+                                                Delete
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         @endif
-
                     </div>
                     <div class="card mb-3">
                         <div class="card-body">
@@ -166,23 +168,6 @@
                                     </div>
                                 </div>
 
-                               <div class="col-md-12"
-                                    style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
-                                    <div class="mb-3">
-                                        <label>Related Product</label>
-                                        <div class="mb-3">
-                                            <select multiple class="related-product w-100" name="related_products[]"
-                                                id="related_products">
-                                                @if (!empty($relatedProducts))
-                                                    @foreach ($relatedProducts as $relProduct)
-                                                        <option selected value="{{ $relProduct->id }}">{{ $relProduct->title }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
@@ -203,6 +188,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card mb-3" style="font-family: 'Times New Roman', Times, serif; font-weight: bold ;">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3 text-center">Related Product</h2>
+                            <div class="mb-3">
+                                <select multiple class="related-product w-100" name="related_products[]"
+                                    id="related_products">
+                                    @if (!empty($relatedProducts))
+                                        @foreach ($relatedProducts as $relProduct)
+                                            <option selected value="{{ $relProduct->id }}">{{ $relProduct->title }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col-md-4">
                     <div class="card mb-3">
@@ -401,38 +404,33 @@
         });
     });
 
-    Dropzone.autoDiscover = false; // Avoid conflict if multiple Dropzone instances
+    Dropzone.autoDiscover = false;
 
     const dropzone = new Dropzone("#productForm", {
-        url: "{{ route('product-images.update') }}",  // Ensure this route is valid
+        url: "{{ route('product-images.update') }}",
         maxFiles: 10,
         paramName: 'image',
-        params: { product_id: '{{ $product->id }}' },  // Pass product ID for backend logic
+        params: { product_id: '{{ $product->id }}' },
         addRemoveLinks: true,
         acceptedFiles: "image/jpeg,image/png,image/gif",
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token for security
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
 
-        // Handle successful upload response
         success: function (file, response) {
-            if (response.status) {  // Verify response from the server
-                $("#image_id").val(response.image_id);  // Store image ID if needed
-
-                const html = createImageCard(response);  // Generate the HTML template
-                $("#product-gallery").append(html);  // Add the image to the gallery
+            if (response.status) {
+                const html = createImageCard(response);
+                $("#product-gallery").append(html);
             } else {
-                alert('Failed to upload image. Please try again.');  // Handle error
+                alert('Failed to upload image. Please try again.');
             }
         },
 
-        // Automatically remove file preview after upload
         complete: function (file) {
             this.removeFile(file);
         }
     });
 
-    // Function to generate the HTML template for an image card
     function createImageCard(response) {
         return `
         <div class="col-md-3" id="image-row-${response.image_id}">
@@ -449,31 +447,27 @@
         </div>`;
     }
 
-    // Function to delete an image card and optionally remove it from the server
     function deleteImage(id) {
         if (confirm('Are you sure you want to delete this image?')) {
             $.ajax({
-                url: "{{ route('product-images.destroy') }}",  // Ensure the correct route with the dynamic ID
+                url: `/product-images/${id}`, // Adjust this URL for your delete route
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function (response) {
-                    console.log('Delete Response:', response); // Log the response to debug
                     if (response.success) {
-                        $(`#image-row-${id}`).remove();  // Remove the card from the gallery
+                        $(`#image-row-${id}`).remove();
                     } else {
                         alert(response.message || 'Failed to delete image. Please try again.');
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error('Delete Error:', error); // Log error to debug
+                error: function () {
                     alert('An error occurred. Please try again.');
                 }
             });
         }
     }
-
 </script>
 
 @endsection

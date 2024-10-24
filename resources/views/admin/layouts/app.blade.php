@@ -13,7 +13,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('admin-assets/css/adminlte.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.css') }}"> -->
     <!-- Summernote -->
     <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css') }}">
 
@@ -24,9 +24,8 @@
     <link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
    
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+    
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -117,8 +116,10 @@
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('admin-assets/js/demo.js') }}"></script>
 
-    <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script>
+    <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script>  
 
+     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>   -->
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
