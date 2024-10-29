@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactUs;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -19,5 +20,12 @@ class FrontController extends Controller
         $data['latestProducts'] =  $latestProducts;
 
         return view('front.home', $data);
+    }
+    public function showFooter($id)
+    {
+         // Fetch all contact records
+         $allContactInfo = ContactUs::all();
+        dd($allContactInfo); // This will output the data for debugging
+        return view('front.home', compact('contactInfo'));
     }
 }

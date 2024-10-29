@@ -3,10 +3,12 @@
 use App\Http\Controllers\Admin\adminlogincontroller;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\Admin\ContactUsController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
+use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\AuthController;
@@ -42,6 +44,10 @@ Route::post('/delete-items', [CartController::class, 'deleteItem'])->name('front
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
+// Route::get('/', [FrontController::class, 'showFooter'])->name('front.home'); // Adjust as needed
+
+// Frontend route
+Route::get('/show-Footer', [FrontController::class, 'showFooter'])->name('homepage');
 
 //Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
 
@@ -49,8 +55,8 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::get('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-        
-        
+
+
         Route::get('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
 
@@ -72,11 +78,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/register-users', [adminlogincontroller::class, 'registerUsers'])->name('admin.registerUsers');
         Route::get('/login', [adminlogincontroller::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [adminlogincontroller::class, 'authenticate'])->name('admin.authenticate');
+
+         //
+
     });
 
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
+
 
         //Category Route
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -103,6 +113,25 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/brands/{brands}', [BrandController::class, 'update'])->name('brands.update');
         Route::delete('/brands/{brands}', [BrandController::class, 'destroy'])->name('brands.delete');
 
+         // Contact Us Route
+        // Route to list contact information
+        Route::get('/admin/contact_us', [ContactUsController::class, 'index'])->name('admin.contact_us.index');
+
+        // Route to Create contact information
+        Route::get('/admin/contact_us/create', [ContactUsController::class, 'create'])->name('admin.contact_us.create'); // Show form for creating
+
+        // Route to Store contact information
+        Route::post('/admin/contact_us', [ContactUsController::class, 'store'])->name('admin.contact_us.store');        // Store new entry
+
+        // Route to edit contact information
+        Route::get('/admin/contact_us/edit/{id}', [ContactUsController::class, 'edit'])->name('admin.contact_us.edit');
+
+        // Route to update contact information
+        Route::post('/admin/contact_us/update/{id}', [ContactUsController::class, 'update'])->name('admin.contact_us.update');
+
+        // Route to delete contact information
+        Route::delete('/admin/contact_us/destroy/{id}', [ContactUsController::class, 'destroy'])->name('admin.contact_us.destroy');
+
 
         // Product Route
         Route::get('/products', [ProductController::class, 'index'])->name('product.index');
@@ -122,6 +151,16 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::post('/product-images/update', [ProductImageController::class, 'update'])->name('product-images.update');
         Route::delete('/admin/product-images/', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
+
+        // Shipping Routes
+        Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
+        Route::post('/shipping', [ShippingController::class, 'store'])->name('shipping.store');
+        Route::get('/shipping/{id}', [ShippingController::class, 'edit'])->name('shipping.edit');
+        Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
+        Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.destroy');
+
+
+
 
         //temp-images.create
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');

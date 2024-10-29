@@ -200,6 +200,8 @@
     <main>
         @yield('content')
     </main>
+   
+
     <footer class="bg-dark text-light mt-5">
         <div class="container pb-5 pt-3">
             <div class="row">
@@ -217,14 +219,28 @@
                                     style="height: 40px; vertical-align: middle;"> -->
 
                                 <!-- Company Name -->
-                                <i class="fas fa-shopping-cart text-primary h3"></i> 
-                                <p class="footer-link d-inline-block" style="margin-left: 10px;">Online Shop</p>
-                            </h4>
-                                <p style="margin: 0;">123 Street, New York, USA</p>
-                            <p style="margin: 0;">Email: <a href="mailto:example@example.com"
-                                    class="footer-link">example@example.com</a></p>
-                            <p style="margin: 0;">Phone: <a href="tel:0000000000" class="footer-link">000 000 0000</a>
-                            </p>
+                                <i class="fas fa-shopping-cart text-primary h5"></i> <!-- Optional icon -->
+                                <!-- <p class="footer-link d-inline-block" style="margin-left: 10px;">
+                                    {{ !empty($allContactInfo) ? $allContactInfo->company_name : '' }}
+                                </p> -->
+                                <span class="footer-link d-inline-block h5 text-uppercase text-primary bg-dark" style="margin-left: 3px;">{{ $allContactInfo->company_name ?? 'Online Shop' }}</span>
+                                <p style="margin: 0;">
+                                    {{ $allContactInfo->company_address ?? '123 Street, New York, USA' }}
+                                </p>
+                                <p style="margin: 0;">
+                                    Email:
+                                    <a href="mailto:{{ $allContactInfo->company_email ?? 'example@example.com' }}"
+                                        class="footer-link">
+                                        {{ $allContactInfo->company_email ?? 'example@example.com' }}
+                                    </a>
+                                </p>
+                                <p style="margin: 0;">
+                                    Phone:
+                                    <a href="tel:{{ $allContactInfo->company_phone_number ?? '000 000 0000' }}"
+                                        class="footer-link">
+                                        {{ $allContactInfo->company_phone_number ?? '000 000 0000' }}
+                                    </a>
+                                </p>
                         </div>
                     </div>
                 </div>
@@ -248,8 +264,7 @@
                     <div class="footer-card mb-4">
                         <h3 class="footer-title">My Account</h3>
                         <ul class="footer-list">
-                            <li><a href="#" class="footer-link">Login</a></li>
-                            <li><a href="#" class="footer-link">Register</a></li>
+                            <li><a href="{{ route('account.login') }}" class="footer-link">Login</a></li>
                             <li><a href="#" class="footer-link">My Orders</a></li>
                         </ul>
                     </div>
@@ -269,6 +284,7 @@
         </div>
     </footer>
 
+    
 
     <script src="{{ asset('front-assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/bootstrap.bundle.5.1.3.min.js') }}"></script>
