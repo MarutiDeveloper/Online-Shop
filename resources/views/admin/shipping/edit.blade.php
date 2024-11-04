@@ -40,9 +40,42 @@
                                 </select>
 
                                 <p></p>
+                                
                             </div>
                         </div>
                         <div class="col-md-4">
+                            
+                            <div class="mb-3">
+                            <select name="states" id="states" class="form-control text-uppercase">
+                                    <option value="">Select a State</option>
+                                    @if ($states->isNotEmpty())
+                                        @foreach ($states as $state)
+                                            <option {{ ($shippingCharge->state_id == $state->id) ? 'selected' : '' }} value="{{ $state->id }}">{{ $state->name }}</option>
+                                        @endforeach
+                                        <option {{ ($shippingCharge->state_id == 'rest_of_state') ? 'selected' : '' }} value="rest_of_state">Rest of the State</option>
+                                    @endif
+                                </select>
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            
+                            <div class="mb-3">
+                            <select name="city" id="city" class="form-control text-uppercase">
+                                    <option value="">Select a Country</option>
+                                    @if ($city->isNotEmpty())
+                                        @foreach ($city as $City)
+                                            <option {{ ($shippingCharge->city_id == $City->id) ? 'selected' : '' }} value="{{ $City->id }}">{{ $City->name }}</option>
+                                        @endforeach
+                                        <option {{ ($shippingCharge->city_id == 'rest_of_city') ? 'selected' : '' }} value="rest_of_city">Rest of the City</option>
+                                    @endif
+                                </select>
+                                <p></p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            
                             <div class="mb-3">
                                 <input value="{{ $shippingCharge->amount }}" type="text" name="amount" id="amount" class="form-control" placeholder="Amount">
                                 <p></p>
@@ -92,6 +125,21 @@
                         $("#country").removeClass('is-invalid').siblings('p')
                             .removeClass('invalid-feedback').html("");
                     }
+                    if (errors['states']) {
+                        $("#states").addClass('is-invalid').siblings('p')
+                            .addClass('invalid-feedback').html(errors['states']);
+                    } else {
+                        $("#states").removeClass('is-invalid').siblings('p')
+                            .removeClass('invalid-feedback').html("");
+                    }
+                    if (errors['city']) {
+                        $("#city").addClass('is-invalid').siblings('p')
+                            .addClass('invalid-feedback').html(errors['city']);
+                    } else {
+                        $("#city").removeClass('is-invalid').siblings('p')
+                            .removeClass('invalid-feedback').html("");
+                    }
+
 
                     if (errors['amount']) {
                         $("#amount").addClass('is-invalid').siblings('p')

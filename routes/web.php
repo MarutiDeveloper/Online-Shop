@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\adminlogincontroller;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\Admin\ContactUsController;
+use App\Http\Controllers\Admin\DiscountCodeController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductImageController;
@@ -45,6 +46,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checko
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
 // Route::get('/', [FrontController::class, 'showFooter'])->name('front.home'); // Adjust as needed
+Route::post('/get-order-summery', [CartController::class, 'getOrderSummery'])->name('front.getOrderSummery');
 
 // Frontend route
 Route::get('/show-Footer', [FrontController::class, 'showFooter'])->name('homepage');
@@ -158,6 +160,20 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/shipping/{id}', [ShippingController::class, 'edit'])->name('shipping.edit');
         Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.destroy');
+
+         // Discount - Coupon Routes.
+
+
+        Route::get('/coupons', [DiscountCodeController::class, 'index'])->name('coupons.index');
+        // // Add this line to define the route for fetching sub-categories
+        // //Route::get('/sub-categories', [ProductController::class, 'getSubCategories'])->name('sub-categories.getSubCategories');
+        Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupons.create');
+        Route::post('/coupons', [DiscountCodeController::class, 'store'])->name('coupons.store');
+        Route::get('/coupons/{coupon}/edit', [DiscountCodeController::class, 'edit'])->name('coupons.edit');
+        // Route::put('/product/{product}', [ProductController::class, 'update'])->name('product.update');
+        // //Route::delete('/product', [ProductController::class, 'destroy'])->name('product.delete');
+        // //Route::delete('/admin/product-images/{id}', [ProductController::class, 'destroy'])->name('product-images.destroy');
+        // Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 
 

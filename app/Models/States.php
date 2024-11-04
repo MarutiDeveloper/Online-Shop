@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Country extends Model
+class States extends Model
 {
     use HasFactory;
     // Define relationship with ShippingCharge
     public function shippingCharges()
     {
-        return $this->hasMany(ShippingCharge::class, 'country_id');
+        return $this->hasMany(ShippingCharge::class, 'state_id');
     }
 }

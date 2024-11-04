@@ -38,7 +38,34 @@
                                         <option value="rest_of_world">Rest of the World</option>
                                     @endif
                                 </select>
-
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <select name="state" id="state" class="form-control text-uppercase">
+                                    <option value="">Select a State</option>
+                                    @if ($states->isNotEmpty())
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                        @endforeach
+                                        <option value="rest_of_state">Rest of the State</option>
+                                    @endif
+                                </select>
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <select name="city" id="city" class="form-control text-uppercase">
+                                    <option value="">Select a City</option>
+                                    @if ($city->isNotEmpty())
+                                        @foreach ($city as $cityes)
+                                            <option value="{{ $cityes->id }}">{{ $cityes->name }}</option>
+                                        @endforeach
+                                        <option value="rest_of_city">Rest of the City</option>
+                                    @endif
+                                </select>
                                 <p></p>
                             </div>
                         </div>
@@ -66,7 +93,9 @@
                         <table class="table table-striped">
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
+                                <th>Country-Name</th>
+                                <th>State-Name</th>
+                                <th>City-Name</th>
                                 <th>Amount</th>
                                 <th>Action</th>
                             </tr>
@@ -75,13 +104,20 @@
                                     <tr>
                                         <td>{{  $shippingCharge->id }}</td>
                                         <td>
-                                            {{  ($shippingCharge->country_id == 'rest_of_world') ? 'Rest of the World' : $shippingCharge->name }}
+                                            {{ $shippingCharge->country_id == 'rest_of_world' ? 'Rest of the World' : ($shippingCharge->country->name ?? 'No Country') }}
                                         </td>
-                                        <td><span style="font-weight:bolder">₹. </span>{{  $shippingCharge->amount }}</td>
+                                        <td>
+                                            {{ $shippingCharge->state_id == 'rest_of_state' ? 'Rest of the State' : ($shippingCharge->state->name ?? 'No State') }}
+                                        </td>
+                                        <td>
+                                            {{ $shippingCharge->city_id == 'rest_of_city' ? 'Rest of the City' : ($shippingCharge->city->name ?? 'No City') }}
+                                        </td>
+                                        <td><span style="font-weight:bolder">$. </span>{{  $shippingCharge->amount }}</td>
                                         <td>
                                             <a href="{{ route('shipping.edit', $shippingCharge->id) }}"
                                                 class="btn btn-outline-light btn-primary">Edit</a>
-                                            <a href="javascript:void(0);" onclick="deleteRecord({{ $shippingCharge->id }});" class="btn btn-outline-light btn-danger">Delete</a>
+                                            <a href="javascript:void(0);" onclick="deleteRecord({{ $shippingCharge->id }});"
+                                                class="btn btn-outline-light btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -123,6 +159,20 @@
                             .addClass('invalid-feedback').html(errors['country']);
                     } else {
                         $("#country").removeClass('is-invalid').siblings('p')
+                            .removeClass('invalid-feedback').html("");
+                    }
+                    if (errors['state']) {
+                        $("#state").addClass('is-invalid').siblings('p')
+                            .addClass('invalid-feedback').html(errors['state']);
+                    } else {
+                        $("#state").removeClass('is-invalid').siblings('p')
+                            .removeClass('invalid-feedback').html("");
+                    }
+                    if (errors['city']) {
+                        $("#city").addClass('is-invalid').siblings('p')
+                            .addClass('invalid-feedback').html(errors['city']);
+                    } else {
+                        $("#city").removeClass('is-invalid').siblings('p')
                             .removeClass('invalid-feedback').html("");
                     }
 

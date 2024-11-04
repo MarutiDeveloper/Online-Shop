@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\ContactUs;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
