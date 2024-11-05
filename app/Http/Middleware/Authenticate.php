@@ -14,4 +14,8 @@ class Authenticate extends Middleware
     {
         return $request->expectsJson() ? null : route('account.login');
     }
+    protected function redirectTogoogle(Request $request): ?string
+    {
+        return $request->expectsJson() ? null : route('google.login');
+    }
 }

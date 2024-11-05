@@ -29,14 +29,16 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="first_name" id="first_name" class="form-control"
-                                            placeholder="First Name" value="{{ (!empty($customerAddress)) ? $customerAddress->first_name : '' }}">
+                                            placeholder="First Name"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->first_name : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="last_name" id="last_name" class="form-control"
-                                            placeholder="Last Name" value="{{ (!empty($customerAddress)) ? $customerAddress->last_name : '' }}">
+                                            placeholder="Last Name"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->last_name : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -44,7 +46,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="email" id="email" class="form-control"
-                                            placeholder="Email" value="{{ (!empty($customerAddress)) ? $customerAddress->email : '' }}">
+                                            placeholder="Email"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->email : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -56,7 +59,8 @@
                                             <option value="">Select a Country</option>
                                             @if ($countries->isNotEmpty())
                                                 @foreach ($countries as $country)
-                                                    <option {{ (!empty($customerAddress) &&  $customerAddress->country_id == $country->id) ? 'selected' : '' }} value="{{ $country->id }}">{{ $country->name }}</option>
+                                                    <option {{ (!empty($customerAddress) && $customerAddress->country_id == $country->id) ? 'selected' : '' }}
+                                                        value="{{ $country->id }}">{{ $country->name }}</option>
                                                 @endforeach
 
                                             @endif
@@ -76,15 +80,16 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="apartment" id="apartment" class="form-control"
-                                            placeholder="Apartment, suite, unit, etc. (optional)" value="{{ (!empty($customerAddress)) ? $customerAddress->apartment : '' }}">
+                                            placeholder="Apartment, suite, unit, etc. (optional)"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->apartment : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="city" id="city" class="form-control"
-                                            placeholder="City" value="{{ (!empty($customerAddress)) ? $customerAddress->city : '' }}">
+                                        <input type="text" name="city" id="city" class="form-control" placeholder="City"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->city : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -92,14 +97,16 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="state" id="state" class="form-control"
-                                            placeholder="State" value="{{ (!empty($customerAddress)) ? $customerAddress->state : '' }}">
+                                            placeholder="State"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->state : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip" value="{{ (!empty($customerAddress)) ? $customerAddress->zip : '' }}">
+                                        <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip"
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->zip : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -107,7 +114,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="mobile" id="mobile" class="form-control"
-                                            placeholder="Mobile No." value="{{ (!empty($customerAddress)) ? $customerAddress->mobile : '' }}">
+                                            placeholder="Mobile No."
+                                            value="{{ (!empty($customerAddress)) ? $customerAddress->mobile : '' }}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -116,7 +124,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <textarea name="order_notes" id="order_notes" cols="30" rows="2"
-                                            placeholder="Order Notes (optional)" class="form-control">{{ (!empty($customerAddress)) ? $customerAddress->order_notes : '' }}</textarea>
+                                            placeholder="Order Notes (optional)"
+                                            class="form-control">{{ (!empty($customerAddress)) ? $customerAddress->order_notes : '' }}</textarea>
                                         <p></p>
                                     </div>
                                 </div>
@@ -147,15 +156,29 @@
                                 <div class="h6"><strong>Subtotal</strong></div>
                                 <div class="h6"><strong>₹. {{ Cart::subtotal() }}</strong></div>
                             </div>
+
+                            <div class="d-flex justify-content-between summery-end">
+                                <div class="h6"><strong>Discount</strong></div>
+                                <div class="h6" id="discount_value"><strong>₹. {{ $discount }}</strong></div>
+                            </div>
+
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
-                                <div class="h6"><strong id="shippingAmount">$. {{ number_format($totalShippingCharge,2) }}</strong></div>
+                                <div class="h6"><strong id="shippingAmount">$.
+                                        {{ number_format($totalShippingCharge, 2) }}</strong></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 summery-end">
                                 <div class="h5"><strong>Total</strong></div>
-                                <div class="h5"><strong id="grandTotal">₹. {{ number_format($grandTotal,2) }}</strong></div>
+                                <div class="h5"><strong id="grandTotal">₹. {{ number_format($grandTotal, 2) }}</strong>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="input-group apply-coupan mt-4">
+                        <input type="text" placeholder="Coupon Code" class="form-control" name="discount_code"
+                            id="discount_code">
+                        <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
                     </div>
 
                     <div class="card payment-form ">
@@ -238,8 +261,7 @@
                 var errors = response.errors;
                 $('button[type="submit"]').prop('disabled', false);
                 //front.thankyou
-                if (response.status == false) 
-                {
+                if (response.status == false) {
                     if (errors.first_name) {
                         $("#first_name")
                             .addClass('is-invalid')
@@ -357,8 +379,8 @@
                             .removeClass('invalid-feedback')
                             .html('');
                     }
-                }else {
-                    window.location.href= "{{ url('thanks/') }}/"+response.orderId;
+                } else {
+                    window.location.href = "{{ url('thanks/') }}/" + response.orderId;
                 }
 
 
@@ -368,19 +390,52 @@
 
 
     $("#country").change(function () {
-                $.ajax({
-                    url: '{{ route("front.getOrderSummery") }}',
-                    type: 'post',
-                    data: {country_id: $(this).val()},
-                    dataType: 'json',
-                    success:function (response) {
-                        if (response.status == true) {
-                            $("#shippingAmount").html('₹.'+response.ShippingCharge);
-                            $("#grandTotal").html('₹.'+response.grandTotal);
-                        }
-                    }
+        $.ajax({
+            url: '{{ route("front.getOrderSummery") }}',
+            type: 'post',
+            data: { country_id: $(this).val() },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    $("#shippingAmount").html('₹.' + response.ShippingCharge);
+                    $("#grandTotal").html('₹.' + response.grandTotal);
+                }
+            }
 
-                });
+        });
+    });
+
+    $("#apply-discount").click(function () {
+        var discountCode = $("#discount_code").val();
+        var countryId = $("#country").val();
+
+        $.ajax({
+            url: '{{ route("front.applyDiscount") }}',
+            type: 'post',
+            data: {
+                code: discountCode,
+                country_id: countryId,
+                _token: '{{ csrf_token() }}'  // Include CSRF token for security
+            },
+            dataType: 'json',
+            success: function (response) {
+                // Check if the request was successful
+                if (response.status) {
+                    // If successful, update the UI with the new grand total and discount amount
+                    alert('Discount applied successfully!');
+                    $("#grandTotal").text(response.grandTotal);  // Assuming you have an element to show the grand total
+                    $("#discountAmount").text(response.discount); // Assuming you have an element to show the discount amount
+                } else {
+                    // If the discount code was invalid, show an error message
+                    alert(response.message);  // Display the error message sent from the server
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors that occur during the AJAX request
+                console.log(xhr.responseText);  // Log the error for debugging
+                alert("An error occurred while applying the discount. Please try again.");
+            }
+        });
     });
 </script>
 @endsection

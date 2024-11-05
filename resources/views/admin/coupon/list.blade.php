@@ -6,8 +6,14 @@
     style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
     <div class="container-fluid my-2">
         <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Discount Coupons</h1>
+        <div class="col-sm-6 d-flex align-items-center">
+                <!-- Logo as a span with an icon -->
+                <span class="logo-icon" style="font-size: 30px; margin-right: 10px;">
+                    <i class="fas fa-tags"></i>
+                </span>
+
+                <!-- Title -->
+                <h1>Discount Coupon Code (%)</h1>
             </div>
             <div class="col-sm-6 text-right">
                 <a href="{{ route('coupons.create') }}" class="btn btn-primary">New Discount Coupon</a>
@@ -105,7 +111,7 @@
                                                 </path>
                                             </svg>
                                         </a>
-                                        <a href="#" onclick="deleteCategory({{ $discountCoupon->id }})"
+                                        <a href="#" onclick="deleteCoupon({{ $discountCoupon->id }})"
                                             class="text-danger w-4 h-4 mr-1">
                                             <svg wire:loading.remove.delay="" wire:target=""
                                                 class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
@@ -141,9 +147,9 @@
 
 @section('customJs')
 <script>
-    function deleteCategory(id) {
+    function deleteCoupon(id) {
 
-        var url = '{{ route("categories.delete", "ID") }}';
+        var url = '{{ route("coupons.delete", "ID") }}';
         var newUrl = url.replace("ID", id)
 
         if (confirm("Are you sure you want to Delete...?")) {
@@ -157,7 +163,7 @@
                 },
                 success: function (response) {
                     if (response["status"]) {
-                        window.location.href = "{{ route('categories.index') }}";
+                        window.location.href = "{{ route('coupons.index') }}";
                     }
                 }
             });

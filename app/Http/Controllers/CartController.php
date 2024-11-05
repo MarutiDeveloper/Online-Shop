@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use App\Models\CustomerAddress;
+use App\Models\DiscountCoupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ShippingCharge;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -126,6 +128,7 @@ class CartController extends Controller
     }
     public function checkout(Request $request)
     {
+        $discount = 0;
 
         // if Cart is empty redirect to cart page
         if (Cart::count() == 0) {
@@ -162,11 +165,11 @@ class CartController extends Controller
                 $totalQty += $item->qty;
             }
 
-            $totalShippingCharge = $totalQty*$shippingInfo->amount;
+            $totalShippingCharge = $totalQty * $shippingInfo->amount;
 
             $grandTotal = Cart::subtotal(2, '.', '') + $totalShippingCharge;
 
-        }else {
+        } else {
             $grandTotal = Cart::subtotal(2, '.', '');
             $totalShippingCharge = 0;
         }
@@ -176,11 +179,13 @@ class CartController extends Controller
             'countries' => $countries,
             'customerAddress' => $customerAddress,
             'totalShippingCharge' => $totalShippingCharge,
+            'discount'  =>$discount,
             'grandTotal' => $grandTotal
         ]);
     }
     public function processCheckout(Request $request)
     {
+        
 
         // Step-1 Apply Validation
 
@@ -334,50 +339,107 @@ class CartController extends Controller
     }
     public function getOrderSummery(Request $request)
     {
-        $subTotal = Cart::subtotal(2, '.', '');
+        // Get the subtotal from the cart
+        $subTotal = Cart::subtotal(2, '.', '');  
+        $discount = 0;  // Initialize discount
+    
+        // Apply Discount if the session has the discount code
+        if (session()->has('code')) {
+            $code = session()->get('code');
+    
+            if ($code->type == 'percent') {
+                // Calculate percentage discount
+                $discount = ($code->discount_amount / 100) * $subTotal;
+            } else {
+                // Fixed discount amount
+                $discount = $code->discount_amount;
+            }
+        }
+    
+        // Calculate total based on country ID
         if ($request->country_id > 0) {
-
-            $subTotal = Cart::subtotal(2, '.', '');
-
             $shippingInfo = ShippingCharge::where('country_id', $request->country_id)->first();
-
             $totalQty = 0;
+    
             foreach (Cart::content() as $item) {
                 $totalQty += $item->qty;
             }
-
+    
+            // Calculate shipping charge
             if ($shippingInfo != null) {
-
                 $ShippingCharge = $totalQty * $shippingInfo->amount;
-
-                $grandTotal = $subTotal + $ShippingCharge;
-
-                return response()->json([
-                    'status' => true,
-                    'grandTotal' => number_format($grandTotal, 2),
-                    'ShippingCharge' => number_format($ShippingCharge, 2)
-                ]);
-
             } else {
+                // Default shipping charge if no match for country_id
                 $shippingInfo = ShippingCharge::where('country_id', 'rest_of_world')->first();
-
                 $ShippingCharge = $totalQty * $shippingInfo->amount;
-
-                $grandTotal = $subTotal + $ShippingCharge;
-
-                return response()->json([
-                    'status' => true,
-                    'grandTotal' => number_format($grandTotal, 2),
-                    'ShippingCharge' => number_format($ShippingCharge, 2)
-                ]);
             }
-
-        } else {
+    
+            // Grand total calculation: (Subtotal - Discount) + ShippingCharge
+            $grandTotal = ($subTotal - $discount) + $ShippingCharge;
+    
+            // Return the JSON response with the calculated values
             return response()->json([
                 'status' => true,
-                'grandTotal' => number_format($subTotal, 2),
+                'grandTotal' => number_format($grandTotal, 2),
+                'discount' => number_format($discount, 2),  // Return formatted discount
+                'ShippingCharge' => number_format($ShippingCharge, 2)
+            ]);
+        } else {
+            // If no country_id, only calculate the total without shipping
+            return response()->json([
+                'status' => true,
+                'grandTotal' => number_format(($subTotal - $discount), 2),
+                'discount' => number_format($discount, 2),  // Return formatted discount
                 'ShippingCharge' => number_format(0, 2)
             ]);
         }
+    }
+    public function applyDiscount(Request $request)
+    {
+        $code = DiscountCoupon::where('code', $request->code)->first();
+    
+        if ($code == null) {
+            $message = 'Invalid Discount Coupon Code...!';
+            session()->flash('error', $message);
+            return response()->json([
+                'status' => false,
+                'message' => $message
+            ]);
+        }
+    
+        // Check if coupon Start Date is valid or not
+        $now = Carbon::now();
+    
+        if ($code->starts_at != "") {
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $code->starts_at);
+            if ($now->lt($startDate)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid Discount Coupon Code-1...!'
+                ]);
+            }
+        }
+    
+        // Check if coupon has expired
+        if (!empty($code->expires_at)) {
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $code->expires_at);
+        
+            if ($now->gt($endDate)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid Discount Coupon Code-2...!'
+                ]);
+            }
+        }
+    
+        // Store the discount code in the session
+        session()->put('code', $code);
+    
+        // Debug the session to verify it is being stored correctly
+        // Uncomment the line below for debugging purposes
+        // dd(session()->get('code')); // This will dump the session value
+    
+        // Call the getOrderSummery method to calculate and return the summary
+        return $this->getOrderSummery($request);
     }
 }

@@ -1,12 +1,17 @@
 @extends('admin.layouts.app')
 
 @section('content')
+
 <!-- Content Header (Page header) -->
-<section class="content-header" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
+<section class="content-header"
+    style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6 d-flex align-items-center">
-                <!-- Logo as a span with an icon -->
+                <!-- Logo image -->
+                <!-- <img src="{{ asset('admin-assets/img/Discount.jpg') }}"  style="height: 50px; margin-right: 15px;"> -->
+
+                <!-- Icon as an alternative or additional decoration -->
                 <span class="logo-icon" style="font-size: 30px; margin-right: 10px;">
                     <i class="fas fa-tags"></i>
                 </span>
@@ -25,43 +30,61 @@
 <section class="content"
     style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
     <!-- Default box -->
-    <div class="container-fluid" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
-        @include("admin.message")
-        <form action="" method="post" id="discountForm" name="discountForm">
+    <div class="container-fluid"
+        style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bold ;">
+        <!-- @include("admin.message") -->
+        <!-- <div class="container">
+        <img src="{{ asset('admin-assets/img/Success full.png') }}" alt="Hand Image" style="max-width: 100%; height: auto;"> -->
+
+            <!-- Display Success Message -->
+            <!-- @if(session('success'))
+                <div class="success-message">
+                    {{ session('success') }}
+                </div>
+            @endif
+        </div> -->
+
+        <form action="{{ route('coupons.update', $coupon->id) }}" method="POST" id="discountForm" name="discountForm">
+            @csrf
+            @method('PUT') <!-- or @method('PATCH') -->
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name">Code</label>
-                                <h5><input type="text" name="code" id="code" class="form-control"
-                                        placeholder="Coupon Code">
-                                <p></p></h5>
+                                <h5><input value="{{ $coupon->code }}" type="text" name="code" id="code"
+                                        class="form-control" placeholder="Coupon Code">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Coupon Code Name</label>
-                                <h5><input type="text" name="name" id="name" class="form-control"
-                                        placeholder="Coupon Code Name">
-                                <p></p></h5>
+                                <h5><input value="{{ $coupon->name }}" type="text" name="name" id="name"
+                                        class="form-control" placeholder="Coupon Code Name">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
-                      
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Max Uses</label>
-                                <h5> <input type="number" name="max_uses" id="max_uses" class="form-control"
-                                        placeholder="Max Uses">
-                                <p></p></h5>
+                                <h5> <input value="{{ $coupon->max_uses }}" type="number" name="max_uses" id="max_uses"
+                                        class="form-control" placeholder="Max Uses">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Max Uses User</label>
-                                <h5> <input type="text" name="max_uses_user" id="max_uses_user" class="form-control"
-                                        placeholder="Max Uses User">
-                                <p></p></h5>
+                                <h5> <input value="{{ $coupon->max_uses_user }}" type="text" name="max_uses_user"
+                                        id="max_uses_user" class="form-control" placeholder="Max Uses User">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
 
@@ -69,10 +92,12 @@
                             <div class="mb-3">
                                 <label for="status">Type</label>
                                 <select name="type" id="type" class="form-control">
-                                    <option value="percent" style="font-family: 'Times New Roman', Times, serif;">
+                                    <option {{ ($coupon->type == 'percent') ? 'selected' : '' }} value="percent"
+                                        style="font-family: 'Times New Roman', Times, serif;">
                                         percent
                                     </option>
-                                    <option value="fixed" style="font-family: 'Times New Roman', Times, serif;">Fixed
+                                    <option {{ ($coupon->type == 'fixed') ? 'selected' : '' }} value="fixed"
+                                        style="font-family: 'Times New Roman', Times, serif;">Fixed
                                     </option>
                                 </select>
                             </div>
@@ -81,18 +106,20 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Discount Amount</label>
-                                <h5> <input type="text" name="discount_amount" id="discount_amount" class="form-control"
-                                        placeholder="Discount Amount">
-                                <p></p></h5>
+                                <h5> <input value="{{ $coupon->discount_amount }}" type="text" name="discount_amount"
+                                        id="discount_amount" class="form-control" placeholder="Discount Amount">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Min Amount</label>
-                                <h5><input type="text" name="min_amount" id="min_amount" class="form-control"
-                                        placeholder="Min Amount">
-                                <p></p></h5>
+                                <h5><input value="{{ $coupon->min_amount }}" type="text" name="min_amount"
+                                        id="min_amount" class="form-control" placeholder="Min Amount">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
 
@@ -100,8 +127,8 @@
                             <div class="mb-3">
                                 <label for="status">Status</label>
                                 <select name="status" id="status" class="form-control">
-                                    <option value="1">Active</option>
-                                    <option value="0">Block</option>
+                                    <option {{ ($coupon->status == 1) ? 'selected' : '' }} value="1">Active</option>
+                                    <option {{ ($coupon->status == 0) ? 'selected' : '' }} value="0">Block</option>
                                 </select>
                                 <p></p>
                             </div>
@@ -110,18 +137,20 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Starts At</label>
-                                <h5><input autocomplete="off" type="text" name="starts_at" id="starts_at" class="form-control"
-                                        placeholder="Starts At">
-                                <p></p></h5>
+                                <h5><input value="{{ $coupon->starts_at }}" autocomplete="off" type="text"
+                                        name="starts_at" id="starts_at" class="form-control" placeholder="Starts At">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Expire At</label>
-                                <h5> <input autocomplete="off" type="text" name="expires_at" id="expires_at" class="form-control"
-                                        placeholder="Expire At">
-                                <p></p></h5>
+                                <h5> <input value="{{ $coupon->expires_at }}" autocomplete="off" type="text"
+                                        name="expires_at" id="expires_at" class="form-control" placeholder="Expire At">
+                                    <p></p>
+                                </h5>
                             </div>
                         </div>
 
@@ -129,7 +158,7 @@
                             <div class="mb-3">
                                 <label for="slug">Description</label>
                                 <textarea class="form-control" name="description" id="description" cols="30"
-                                    rows="5"></textarea>
+                                    rows="5">{{  $coupon->description }}</textarea>
                                 <p></p>
                             </div>
                         </div>
@@ -138,7 +167,7 @@
                 </div>
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-outline-light btn-primary">Create</button>
+                <button type="submit" class="btn btn-outline-light btn-primary">Update</button>
                 <a href="{{ route('coupons.index') }}" class="btn btn-outline-light btn-outline-dark ml-3">Cancel</a>
             </div>
         </form>
@@ -167,8 +196,8 @@
         var element = $(this);
         $("button[type=submit]").prop('disabled', true);
         $.ajax({
-            url: '{{ route("coupons.store") }}',
-            type: 'post',
+            url: '{{ route("coupons.update", $coupon->id) }}',
+            type: 'put',
             data: element.serializeArray(),
             dataType: 'json',
             success: function (response) {
@@ -183,10 +212,10 @@
                     $("#discount_amount").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
 
-                        $("#starts_at").removeClass('is-invalid').siblings('p')
+                    $("#starts_at").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
 
-                        $("#expires_at").removeClass('is-invalid').siblings('p')
+                    $("#expires_at").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
                 } else {
                     var errors = response['errors'];
@@ -219,7 +248,7 @@
                         $("#expires_at").removeClass('is-invalid').siblings('p')
                             .removeClass('invalid-feedback').html("");
                     }
-                    
+
                 }
 
             }, error: function (jqXHR, exception) {
@@ -228,9 +257,9 @@
         });
     });
 
-    
 
-    
+
+
 
 </script>
 
