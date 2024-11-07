@@ -35,6 +35,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/css/slick.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset(path: 'front-assets/slick-theme.css') }}" />
@@ -64,7 +65,7 @@
         <div class="container">
             <div class="row align-items-center py-3 d-none d-lg-flex justify-content-between">
                 <div class="col-lg-4 logo">
-                    <a href="index.php" class="text-decoration-none">
+                    <a href="{{ route('front.home') }}" class="text-decoration-none">
                         <i class="fas fa-shopping-cart text-primary h3"></i> <!-- Optional icon -->
                         <span class="h3 text-uppercase text-primary bg-dark px-2"
                             style="font-family: Georgia, 'Times New Roman', Times, serif;">Online</span>
@@ -73,7 +74,20 @@
                     </a>
                 </div>
                 <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
-                    <div class="nav-item dropdown">
+                    <!-- My Account Dropdown -->
+                    <div class="nav-item dropdown ml-4"><!-- Ensure this has enough left margin -->
+                        <a href="#" class="nav-link dropdown-toggle text-dark" id="accountDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            My Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
+                            <li><a href="{{ route('account.register') }}" class="dropdown-item">Registration</a></li>
+                            <li><a href="{{ route('account.login') }}" class="dropdown-item">Login</a></li>
+                            <li><a href="{{ route('account.profile') }}" class="dropdown-item">Profile</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- <div class="nav-item dropdown">
                         <a href="register.php" class="nav-link dropdown-toggle text-dark" id="accountDropdown"
                             role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             style="font-family: Georgia, 'Times New Roman', Times, serif;">
@@ -83,7 +97,8 @@
                             <a href="login.php" class="dropdown-item">Login</a>
                             <a href="register.php" class="dropdown-item">Register</a>
                         </div>
-                    </div>
+
+                    </div> -->
                     <!-- <div class="nav-item">
                             <a href="login.php" class="nav-link text-dark">Login</a>
                         </div>
@@ -188,19 +203,31 @@
 
 
                     </ul>
-                </div>
-                <div class="right-nav py-0">
-                    <a href="{{ route('front.cart') }}" class="ml-3 d-flex pt-2">
-                        <i class="fas fa-shopping-cart text-primary"></i>
-                    </a>
-                </div>
+                    <!-- My Account Dropdown -->
+                    <!-- <div class="nav-item dropdown ml-4"> Ensure this has enough left margin
+                        <a href="#" class="nav-link dropdown-toggle text-light" id="accountDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            My Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
+                            <li><a href="{{ route('account.login') }}" class="dropdown-item">Login</a></li>
+                            <li><a href="{{ route('account.profile') }}" class="dropdown-item">Profile</a></li>
+                        </ul>
+                    </div> -->
+
+                    <!-- Cart Icon with additional spacing -->
+                    <div class="right-nav py-0 ml-5"> <!-- Added ml-4 for left margin -->
+                        <a href="{{ route('front.cart') }}" class="d-flex pt-2">
+                            <i class="fas fa-shopping-cart text-primary"></i>
+                        </a>
             </nav>
         </div>
+
     </header>
     <main>
         @yield('content')
     </main>
-   
+
 
     <footer class="bg-dark text-light mt-5">
         <div class="container pb-5 pt-3">
@@ -223,7 +250,8 @@
                                 <!-- <p class="footer-link d-inline-block" style="margin-left: 10px;">
                                     {{ !empty($allContactInfo) ? $allContactInfo->company_name : '' }}
                                 </p> -->
-                                <span class="footer-link d-inline-block h5 text-uppercase text-primary bg-dark" style="margin-left: 3px;">{{ $allContactInfo->company_name ?? 'Online Shop' }}</span>
+                                <span class="footer-link d-inline-block h5 text-uppercase text-primary bg-dark"
+                                    style="margin-left: 3px;">{{ $allContactInfo->company_name ?? 'Online Shop' }}</span>
                                 <p style="margin: 0;">
                                     {{ $allContactInfo->company_address ?? '123 Street, New York, USA' }}
                                 </p>
@@ -284,7 +312,7 @@
         </div>
     </footer>
 
-    
+
 
     <script src="{{ asset('front-assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/bootstrap.bundle.5.1.3.min.js') }}"></script>

@@ -19,6 +19,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,11 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+Route::get('/optimize-clear', function () {
+    Artisan::call('optimize:clear');
+    return response()->json(['message' => 'Optimization cache cleared successfully.']);
+});
+
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -48,6 +54,7 @@ Route::get('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('fron
 // Route::get('/', [FrontController::class, 'showFooter'])->name('front.home'); // Adjust as needed
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummery'])->name('front.getOrderSummery');
 Route::post('/apply-discount', [CartController::class, 'applyDiscount'])->name('front.applyDiscount');
+Route::post('/remove-discount', [CartController::class, 'removeCoupon'])->name('front.removeCoupon');
 
 
 
@@ -80,6 +87,8 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetail'])->name('account.orderDetail');
         Route::get('/logout', [AuthController::class, 'logout'])->name('account.logout');
     });
 

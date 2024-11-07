@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\ContactUs;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Artisan;
 
 class FrontController extends Controller
 {
+    public function clearCache()
+    {        
+        Artisan::call('view:clear');
+        Artisan::call('route:clear');
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('optimize:clear');
+        return 'Cache Cleared now , go back';
+    }
     public function index(){
 
         $products = Product::with('brand')->get(); // Retrieve products with their associated brands

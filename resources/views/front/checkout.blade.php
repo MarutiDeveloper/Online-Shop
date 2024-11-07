@@ -69,6 +69,8 @@
                                     </div>
                                 </div>
 
+
+
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <textarea name="address" id="address" cols="30" rows="3" placeholder="Address"
@@ -86,6 +88,28 @@
                                     </div>
                                 </div>
 
+                                <!-- <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <select name="city" id="city" class="form-control">
+
+                                            <option value="">SELECT A CITY</option>
+
+                                        </select>
+                                        <p></p>
+                                    </div>
+                                </div> -->
+
+                                <!-- <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <select name="State" id="State" class="form-control">
+
+                                            <option value="">SELECT A STATE</option>
+
+                                        </select>
+                                        <p></p>
+                                    </div>
+                                </div> -->
+
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="city" id="city" class="form-control" placeholder="City"
@@ -93,6 +117,8 @@
                                         <p></p>
                                     </div>
                                 </div>
+
+                                
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -159,12 +185,12 @@
 
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Discount</strong></div>
-                                <div class="h6" id="discount_value"><strong>₹. {{ $discount }}</strong></div>
+                                <div class="h5" id="discount_value"><strong>₹. {{ $discount }}</strong></div>
                             </div>
 
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
-                                <div class="h6"><strong id="shippingAmount">$.
+                                <div class="h5"><strong id="shippingAmount">$.
                                         {{ number_format($totalShippingCharge, 2) }}</strong></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 summery-end">
@@ -179,6 +205,18 @@
                         <input type="text" placeholder="Coupon Code" class="form-control" name="discount_code"
                             id="discount_code">
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
+                    </div>
+
+                    <div id="discount-response-wrapper">
+                        @if (Session::has('code'))
+                            <div class="mt-4 text-center d-flex justify-content-center align-items-center"
+                                id="discount-response">
+                                <strong class="me-2">{{ Session::get('code')->code }}</strong>
+                                <a class="btn btn-sm btn-danger" id="remove-discount">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="card payment-form ">
@@ -423,8 +461,52 @@
                 if (response.status) {
                     // If successful, update the UI with the new grand total and discount amount
                     alert('Discount applied successfully!');
-                    $("#grandTotal").text(response.grandTotal);  // Assuming you have an element to show the grand total
-                    $("#discountAmount").text(response.discount); // Assuming you have an element to show the discount amount
+                    $("#shippingAmount").html('₹.' + response.ShippingCharge);
+                    $("#grandTotal").html('₹.' + response.grandTotal);  // Assuming you have an element to show the grand total
+                    $("#discount_value").html('₹.' + response.discount);  // Assuming you have an element to show the discount amount
+                    $("#discount-response-wrapper").html(response.discountString);
+
+                } else {
+                    $("#discount-response-wrapper").html(
+                        "<span class='text-danger' style='font-family: Cambria, Cochin, Georgia, \"Times New Roman\", Times, serif; font-weight: bold; display: block; text-align: center;'>"
+                        + response.message +
+                        "</span>"
+                    );
+                    // If the discount code was invalid, show an error message
+                    alert(response.message);  // Display the error message sent from the server
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors that occur during the AJAX request
+                console.log(xhr.responseText);  // Log the error for debugging
+                alert("An error occurred while applying the discount. Please try again.");
+            }
+        });
+    });
+
+    $('body').on('click', "#remove-discount", function () {
+        var countryId = $("#country").val();
+
+        $.ajax({
+            url: '{{ route("front.removeCoupon") }}',
+            type: 'post',
+            data: {
+                country_id: countryId,
+                _token: '{{ csrf_token() }}'  // Include CSRF token for security
+            },
+            dataType: 'json',
+            success: function (response) {
+                // Check if the request was successful
+                if (response.status) {
+                    // If successful, update the UI with the new grand total and discount amount
+                    alert('Discount Coupon Removre Successfully!');
+                    $("#shippingAmount").html('₹.' + response.ShippingCharge);
+                    $("#grandTotal").html('₹.' + response.grandTotal);  // Assuming you have an element to show the grand total
+                    $("#discount_value").html('₹.' + response.discount);  // Assuming you have an element to show the discount amount
+
+                    $("#discount-response").html('');
+                    $("#discount_code").val('');
+
                 } else {
                     // If the discount code was invalid, show an error message
                     alert(response.message);  // Display the error message sent from the server
@@ -437,5 +519,6 @@
             }
         });
     });
+
 </script>
 @endsection

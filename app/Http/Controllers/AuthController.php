@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -86,5 +89,33 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('account.login')->with('success', ' You have Successfully logout..! ');
+    }
+    public function orders()
+    {
+        $data = [];
+
+        $user = Auth::user();
+
+        $orders = Order::where('user_id', $user->id)->orderBy('created_at', 'DESC')->get();
+
+        $data['orders'] = $orders;
+        return view('front.account.order', $data);
+    }
+    public function orderDetail($id)
+    {
+        $data = [];
+
+        // Get authenticated user
+        $user = Auth::user();
+
+        // Retrieve the specific order for the user
+        $order = Order::where('user_id', $user->id)->where('id', $id)->first();
+        $data['order'] = $order;
+
+        // Retrieve the order items for this order
+        $orderItems = OrderItem::where('order_id', $id)->with('product.brand')->get(); // Eager loading 'product' with its 'brand'
+        $data['orderItems'] = $orderItems;
+
+        return view('front.account.order-detail', $data);
     }
 }
