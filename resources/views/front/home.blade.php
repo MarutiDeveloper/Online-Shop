@@ -13,6 +13,17 @@
                         Your browser does not support the video tag.
                 </video>
 
+                 <!-- For Mobile Devices
+            <video class="d-block d-sm-none" autoplay muted loop playsinline id="startupVideoMobile">
+                <source src="{{ asset('front-assets/startup-video/Online-shop-1.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video> -->
+
+            <!-- For Larger Screens (Tablet, Laptop, Desktop) -->
+            <!-- <video class="d-none d-sm-block" autoplay muted loop playsinline id="startupVideoDesktop">
+                <source src="{{ asset('front-assets/startup-video/Online-shop-1.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video> -->
 
                 <!-- <picture>
                     <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/carousel-1-m.jpg') }}" />

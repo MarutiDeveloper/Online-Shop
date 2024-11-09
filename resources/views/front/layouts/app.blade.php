@@ -7,6 +7,7 @@
     <meta name="description" content="" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="pinterest" content="nopin" />
@@ -34,6 +35,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
@@ -74,18 +76,28 @@
                     </a>
                 </div>
                 <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
-                    <!-- My Account Dropdown -->
-                    <div class="nav-item dropdown ml-4"><!-- Ensure this has enough left margin -->
-                        <a href="#" class="nav-link dropdown-toggle text-dark" id="accountDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            My Account
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
-                            <li><a href="{{ route('account.register') }}" class="dropdown-item">Registration</a></li>
-                            <li><a href="{{ route('account.login') }}" class="dropdown-item">Login</a></li>
-                            <li><a href="{{ route('account.profile') }}" class="dropdown-item">Profile</a></li>
-                        </ul>
-                    </div>
+
+                    @if (Auth::check())
+                        <!-- My Account Dropdown with Icon -->
+                        <div class="col-2 d-flex align-items-center">
+                            <!-- My Account Icon and Link -->
+                            <a href="{{ route('account.profile') }}" class="d-flex align-items-center">
+                                <!-- <i class="fas fa-user mr-2"></i> My Account Icon -->
+                                My Account
+                            </a>
+                        </div>
+                    @else
+                        <!-- Login / Registration with Icon -->
+
+                        <div class="col-3 d-flex align-items-center">
+                            <a href="{{ route('account.login') }}" class="d-flex align-items-center">
+                                <i class="fas fa-sign-in-alt ml-2"></i> <!-- Login Icon -->
+                                <span class="ml-2">Login / Sign Up</span>
+                            </a>
+                        </div>
+                    @endif
+
+
 
                     <!-- <div class="nav-item dropdown">
                         <a href="register.php" class="nav-link dropdown-toggle text-dark" id="accountDropdown"

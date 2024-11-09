@@ -88,4 +88,23 @@
         font-size: 1.1rem; /* Adjust font size for product title on mobile */
     }
 }
+.carousel-item video {
+    width: 100%;    /* Make the video take the full width of its container */
+    height: auto;   /* Maintain aspect ratio by adjusting height */
+    max-width: 100%; /* Ensure video doesn’t exceed the screen width */
+    object-fit: cover; /* This makes sure the video covers the container while preserving its aspect ratio */
+}
+/* Mobile view */
+@media (max-width: 767px) {
+    .carousel-item video {
+        height: auto; /* Allow the video to scale based on width */
+    }
+}
+
+/* Tablet and larger screens */
+@media (min-width: 768px) {
+    .carousel-item video {
+        height: auto;
+    }
+}
 
