@@ -145,13 +145,24 @@
                                                                             style="width: 100%; height: 200px; object-fit: cover;" alt="Default Image" />
                                                                     @endif
                                                                 </a>
-                                                                <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
-
+                                                                <a onclick="addToWishList({{ $product->id }})" class="whishlist" href="javascript:void(0);"><i class="far fa-heart"></i></a>
                                                                 <div class="product-action">
-                                                                    <a class="btn btn-dark" href="javascript:void(0);"
-                                                                        onclick="addToCart({{ $product->id }});">
-                                                                        <i class="fa fa-shopping-cart"></i> Add To Cart
-                                                                    </a>
+                                                                                @if ($product->track_qty == 'Yes')
+                                                                                    @if ($product->qty > 0)
+                                                                                            <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{ $product->id }});">
+                                                                                                <i class="fa fa-shopping-cart"></i> Add To Cart
+                                                                                            </a>
+                                                                                                @else
+                                                                                                        <a class="btn btn-dark" href="javascript:void(0);">
+                                                                                                        Out of Stock
+                                                                                                        </a>
+                                                                                    @endif
+                                                                            
+                                                                                    @else
+                                                                                            <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{ $product->id }});">
+                                                                                                <i class="fa fa-shopping-cart"></i> Add To Cart
+                                                                                            </a>
+                                                                                @endif
                                                                 </div>
                                                             </div>
                                                             <div class="card-body text-center mt-3">
@@ -246,6 +257,12 @@
 
         //Price Range Filter
         url += '&price_min=' + slider.result.from + '&price_max=' + slider.result.to;
+
+        var keyword = $("#search").val();
+
+        if (keyword.length > 0) {
+            url += '&search=' +keyword;
+        }
 
         //Sorting Filter
         url += '&sort=' + $("#sort").val();

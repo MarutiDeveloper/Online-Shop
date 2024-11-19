@@ -28,3 +28,6 @@
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
   color:#000;
 }
+.center-text {
+  text-align: center;
+}

@@ -96,7 +96,7 @@
         <footer class="main-footer">
 
             <strong style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif: bold ;">Copyright
-                &copy; 2023-2024 ShopEase All rights reserved.
+                &copy; 2024-2025 Online Shop All rights reserved.
         </footer>
 
     </div>

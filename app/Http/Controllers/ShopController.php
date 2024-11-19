@@ -52,6 +52,10 @@ class ShopController extends Controller
 
         }
 
+        if (!empty($request->get('search'))) {
+            $products = $products->where('title', 'like', '%'.$request->get('search').'%');
+        }
+
         //$products = Product::orderBy('id', 'DESC')->where('status', 1)->get();
 
 
@@ -99,7 +103,7 @@ class ShopController extends Controller
 
         if (!empty($product->related_products)) {
             $productArray = explode(',', $product->related_products);
-            $relatedProducts = Product::whereIn('id', $productArray)->get();
+            $relatedProducts = Product::whereIn('id', $productArray)->where('status', 1)->get();
         }
 
         $data = [

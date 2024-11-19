@@ -57,7 +57,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="orders.html" class="nav-link">
+                    <a href="{{ route('orders.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-shopping-bag"></i>
                         <p>Orders</p>
                     </a>
@@ -71,7 +71,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="users.html" class="nav-link">
+                    <a href="{{ route('users.index') }}" class="nav-link">
                         <i class="nav-icon  fas fa-users"></i>
                         <p>Users</p>
                     </a>
@@ -80,6 +80,12 @@
                     <a href="{{ route('admin.contact_us.index') }}" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
                         <p>Pages</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.clearCache') }}" class="nav-link">
+                        <i class="nav-icon  far fa-file-alt"></i>
+                        <p>Reset</p>
                     </a>
                 </li>
             </ul>

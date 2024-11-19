@@ -52,7 +52,13 @@
                                         <h5>
                                             <p class="mb-lg-0 fs-sm fw-bold">
                                                 <time datetime="2019-10-01">
-                                                    01 Oct, 2019
+                                                    <td style="text-align: center;">
+                                                            @if (!empty($order->shipped_date))
+                                                                {{ \Carbon\Carbon::parse($order->shipped_date)->format('d M, Y') }}
+                                                            @else
+                                                                <span class="text-muted" style="color: red; font-weight: bold;">N/A</span>
+                                                            @endif
+                                                    </td>
                                                 </time>
                                             </p>
                                         </h5>
@@ -68,8 +74,10 @@
                                                     <h5><span class="badge bg-danger">Pending</span></h5>
                                                 @elseif ($order->status == 'shipped')
                                                     <h5><span class="badge bg-info">Shipped</span></h5>
-                                                @else
+                                                @elseif($order->status == 'delivered')
                                                     <h5><span class="badge bg-success">Delivered</span></h5>
+                                                    @else
+                                                    <h5><span class="badge bg-danger">Cancelled</span></h5>
                                                 @endif
                                             </p>
                                         </h6>
@@ -93,7 +101,7 @@
                     <div class="card-footer p-3">
 
                         <!-- Heading -->
-                        <h6 class="mb-7 h5 mt-4">Order Items (3)</h6>
+                        <h6 class="mb-7 h5 mt-4">Order Items : ({{ $orderItemsCount }}) </h6>
 
                         <!-- Divider -->
                         <hr class="my-3">
@@ -101,50 +109,69 @@
                         <!-- List group -->
                         <ul style="font-family: 'Times New Roman', Times, serif;">
                             @foreach ($orderItems as $item)
-                                <li class="list-group-item">
-                                    <div class="row align-items-center">
-                                        <div class="col-4 col-md-3 col-xl-2">
-                                            <!-- Image -->
-                                            <!-- <a href="product.html"><img src="images/product-1.jpg" alt="..."
-                                                    class="img-fluid"></a> -->
-                                                    @php
-                                                            $productImage = getProductImage($item->product_id);
-                                                            $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
-                                                    @endphp
+                                                            <li class="list-group-item">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-4 col-md-3 col-xl-2">
+                                                                        <!-- Image -->
+                                                                        <!-- <a href="product.html"><img src="images/product-1.jpg" alt="..."
+                                                                                class="img-fluid"></a> -->
+                                                                                @php
+                                                                                    $productImage = getProductImage($item->product_id);
+                                                                                    $imagePath = $productImage ? 'uploads/product/large/' . $productImage->image : '';
+                                                                                @endphp
 
-                                                       @if (!empty($productImage) && file_exists(public_path($imagePath)))
-                                                                    <img class="img-fluid" src="{{ asset($imagePath) }}?v={{ time() }}"
-                                                                        alt="Product Image" 
-                                                                        style="height: 200px; object-fit: cover; width: 100%;"> <!-- Fixed size and responsive -->
-                                                                @else
-                                                                    <img class="img-fluid" src="{{ asset('admin-assets/img/default-150x150.png') }}"
-                                                                        alt="Default Image" 
-                                                                        style="height: 200px; object-fit: cover; width: 100%;"> <!-- Same styling for default image -->
-                                                        @endif
-                                                    
-                                        </div>
-                                        <div class="col">
-                                            <!-- Title -->
-                                            <p class="mb-4 fs-sm fw-bold">
-                                                <a class="text-body" href="product.html">{{  $item->name }} x {{  $item->qty }}</a>
-                                                <br>
-                                                @foreach($orderItems as $item)
-                                                Brand: <a style="color: #28a745; font-size: 18px;"> {{ $item->product->brand ? $item->product->brand->name : 'N/A' }}</a>
-                                                @endforeach
-                                                <br>
-                                                <h5><span class="text-muted"> <strong style="color: #28a745; font-size: 18px;"><span>₹. </span>
-                                                </strong>{{  $item->total }}</span></h5>
-                                            </p>
-                                        </div>
+                                                                                   @if (!empty($productImage) && file_exists(public_path($imagePath)))
+                                                                                    <img class="img-fluid" src="{{ asset($imagePath) }}?v={{ time() }}"
+                                                                                        alt="Product Image" 
+                                                                                        style="height: 200px; object-fit: cover; width: 100%;"> <!-- Fixed size and responsive --><br>
+                                                                                @else
+                                                                                    <img class="img-fluid" src="{{ asset('admin-assets/img/default-150x150.png') }}"
+                                                                                        alt="Default Image" 
+                                                                                        style="height: 200px; object-fit: cover; width: 100%;"> <!-- Same styling for default image --><br>
+                                                                                @endif
+                                                                                    <!-- <br>    <button style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;" onclick="showVideo()">
+                                                                                                            Watch Video
+                                                                                                </button> -->
 
-                                        <div class="col">
-                                            <!-- Title -->
-                                            <p class="mb-4 fs-sm fw-bold">
-                                               
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
+
+                                                                    </div>
+                                                                    <!-- Video Player (initially hidden) -->
+                                                                        <!-- <div id="videoContainer" style="display: none; margin-top: 20px;">
+                                                                            <video id="productVideo" width="600" controls>
+                                                                                <source src="https://www.youtube.com/watch?v=ePdbj2bZ-Ro" type="video/mp4">
+                                                                                Your browser does not support the video tag.
+                                                                            </video>
+
+                                                                        </div> -->
+                                                                        <!-- YouTube Video Embed (initially hidden) -->
+                                                                        <div id="videoContainer" style="display: none; margin-top: 20px;">
+                                                                            <iframe id="youtubeVideo" width="600" height="400" src="https://www.youtube.com/embed/ePdbj2bZ-Ro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                                        </div>
+
+                                                                    <div class="col">
+                                                                        <!-- Title -->
+                                                                        <p class="mb-4 fs-sm fw-bold">
+                                                                            <a class="text-body" href="product.html">{{  $item->name }} x {{  $item->qty }}</a>
+                                                                            <br>
+                                                                            @foreach($orderItems as $item)
+                                                                                                                             <!-- Brand Logo -->
+                                                                                <!-- <img src="{{ asset(path: 'front-assets/images/Samsung.png') }}"  style="width: 40px; height: 40px; margin-right: 10px;"> -->
+                                                                                                                            Brand: <a style="color: #28a745; font-size: 18px;"> {{ $item->product->brand ? $item->product->brand->name : 'N/A' }}</a><br>
+                                                                            @endforeach
+
+                                                                          <span class="text-muted"> <strong style="color: #28a745; font-size: 18px;"><span>₹. </span>
+                                                                            </strong>{{  $item->total }}</span>
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="col">
+                                                                        <!-- Title -->
+                                                                        <p class="mb-4 fs-sm fw-bold">
+
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
                             @endforeach
                             
                         </ul>
@@ -161,22 +188,22 @@
                             <li class="list-group-item d-flex">
                                 <span>Subtotal</span>
                                 <span class="ms-auto"> <strong>₹.
-                                    </strong>{{ number_format($order->subtotal,2) }}</span>
+                                    </strong>{{ number_format($order->subtotal, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
-                                <span>Discount {{ (!empty($order->coupon_code)) ? '('.$order->coupon_code.')' : '' }}</span>
+                                <span>Discount {{ (!empty($order->coupon_code)) ? '(' . $order->coupon_code . ')' : '' }}</span>
                                 <span class="ms-auto"><strong>₹.
-                                    </strong>{{ number_format($order->discount,2) }}</span>
+                                    </strong>{{ number_format($order->discount, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
                                 <span>Shipping</span>
                                 <span class="ms-auto"> <strong>₹.
-                                    </strong>{{ number_format($order->shipping,2) }}</span>
+                                    </strong>{{ number_format($order->shipping, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex fs-lg fw-bold" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
                                 <span>Grand Total</span>
                                 <span class="ms-auto"> <strong>₹.
-                                    </strong>{{ number_format($order->grand_total,2) }}/-</span>
+                                    </strong>{{ number_format($order->grand_total, 2) }}/-</span>
                             </li>
                         </ul>
                     </div>
@@ -188,6 +215,17 @@
 @endsection
 @section('customJs')
 <script type="text/javascript">
-
+// function playProductVideo() {
+//     // Show the video container
+//     document.getElementById('videoContainer').style.display = 'block';
+    
+//     // Automatically play the video
+//     var video = document.getElementById('productVideo');
+//     video.play();
+// }
+// function showVideo() {
+//     // Show the video container
+//     document.getElementById('videoContainer').style.display = 'block';
+// }
 </script>
 @endsection

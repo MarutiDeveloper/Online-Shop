@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\Country;
+use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -83,8 +87,101 @@ class AuthController extends Controller
     }
     public function profile(Request $request)
     {
-        return view('front.account.profile');
+        $userId = Auth::user()->id;
+        $address = CustomerAddress::where('user_id', $userId)->first();
+        $countries = Country::orderBy('name', 'ASC')->get();
+        $user = User::where('id', $userId)->first();
+        return view('front.account.profile', [
+            'user'  =>$user,
+            'countries' =>  $countries,
+            'address' =>  $address
+        ]);
     }
+    public function updateProfile(Request $request) {
+        $userId =   Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+            'name'  =>  'required',
+            'email' =>  'required|email|unique:users,email,'.$userId.',id',
+            'phone' =>  'required'
+        ]);
+        if ($validator->passes()) {
+           $user = User::find($userId);
+           $user->name  =   $request->name;
+           $user->email  =   $request->email;
+           $user->phone  =   $request->phone;
+           $user->save();
+
+           session()->flash('success', 'You have Successfuly Updated...!');
+           return response()->json([
+            'status'    => true,
+            'message'    =>  'You have Successfuly Updated...!'
+        ]);
+
+        }else {
+            return response()->json([
+                'status'    => false,
+                'errors'    =>  $validator->errors()
+            ]);
+        }
+    }
+
+    public function updateAddress(Request $request) {
+        $userId =   Auth::user()->id;
+
+
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|min:5',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'country_id' => 'required',
+            'address' => 'required|min:30',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
+            'mobile' => 'required',
+        ]);
+
+
+        if ($validator->passes()) {
+        //    $user = User::find($userId);
+        //    $user->name  =   $request->name;
+        //    $user->email  =   $request->email;
+        //    $user->phone  =   $request->phone;
+        //    $user->save();
+
+        CustomerAddress::updateOrCreate(
+            ['user_id' =>  $userId],
+            [
+                'user_id' =>  $userId,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'country_id' => $request->country_id,
+                'address' => $request->address,
+                'apartment' => $request->appartment,
+                'city' => $request->city,
+                'state' => $request->state,
+                'zip' => $request->zip,
+
+            ]
+        );
+
+           session()->flash('success', 'You have Successfuly Updated...!');
+           return response()->json([
+            'status'    => true,
+            'message'    =>  'You have Successfuly Updated...!'
+        ]);
+
+        }else {
+            return response()->json([
+                'status'    => false,
+                'errors'    =>  $validator->errors()
+            ]);
+        }
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -116,6 +213,37 @@ class AuthController extends Controller
         $orderItems = OrderItem::where('order_id', $id)->with('product.brand')->get(); // Eager loading 'product' with its 'brand'
         $data['orderItems'] = $orderItems;
 
+        $orderItemsCount = OrderItem::where('order_id', $id)->with('product.brand')->count(); // Eager loading 'product' with its 'brand'
+        $data['orderItemsCount'] = $orderItemsCount;
+
         return view('front.account.order-detail', $data);
+    }
+    public function wishlist(Request $request)
+    {
+        // Fetch wishlist items for the authenticated user
+        $wishlists = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+
+        // Pass the wishlists data to the view
+        return view('front.account.wishlist', ['wishlists' => $wishlists]);
+    }
+    public function removeProductFromWishList(Request $request) {
+        $wishlist = Wishlist::where('user_id', Auth::user()->id)->where('product_id', $request->id)->first();
+        if ($wishlist == null) {
+
+            session()->flash('error', 'Product already Removed.');
+
+            return response()->json([
+                'status'    =>  true,
+                
+            ]);
+        }else {
+            Wishlist::where('user_id', Auth::user()->id)->where('product_id', $request->id)->delete();
+            session()->flash('success', 'Product Removed Successfully.');
+
+            return response()->json([
+                'status'    =>  true,
+                
+            ]);
+        }
     }
 }

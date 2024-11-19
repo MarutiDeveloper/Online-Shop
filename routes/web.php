@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\adminlogincontroller;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +39,10 @@ use Illuminate\Support\Facades\Artisan;
 //     return view('welcome');
 // });
 
+// Route::get('/test', function () {
+//     orderEmail(14);
+// });
+
 Route::get('/optimize-clear', function () {
     Artisan::call('optimize:clear');
     return response()->json(['message' => 'Optimization cache cleared successfully.']);
@@ -49,12 +56,29 @@ Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.a
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-items', [CartController::class, 'deleteItem'])->name('front.deleteItem.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
+//Route for creating the checkout session
+Route::post('/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->name('createCheckoutSession');
+Route::get('/payment-success', function () {
+    return "Payment Successful! Thank you for your purchase.";
+})->name('payment.success');
+Route::get('/payment-failed', function () {
+    return "Payment Failed! Please try again.";
+})->name('payment.cancel');
+// Route for the success page after payment
+// Route::get('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+
+// Route for the cancel page after payment failure or cancellation
+// Route::get('/payment/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
 // Route::get('/', [FrontController::class, 'showFooter'])->name('front.home'); // Adjust as needed
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummery'])->name('front.getOrderSummery');
 Route::post('/apply-discount', [CartController::class, 'applyDiscount'])->name('front.applyDiscount');
 Route::post('/remove-discount', [CartController::class, 'removeCoupon'])->name('front.removeCoupon');
+Route::post('/add-to-wishlist', [FrontController::class, 'addToWishlist'])->name('front.addToWishlist');
+
+// Route for clearing cache
+Route::get('/clear-cache', [FrontController::class, 'clearCache'])->name('front.clearCache');
 
 
 
@@ -76,7 +100,7 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
         // Socialite Login Url
-        
+
         Route::get('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
 
@@ -84,7 +108,11 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('account.updateProfile');
+        Route::post('/update-address', [AuthController::class, 'updateAddress'])->name('account.updateAddress');
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/my-wishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
+        Route::post('/remove-product-from-wishlist', [AuthController::class, 'removeProductFromWishList'])->name('account.removeProductFromWishList');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetail'])->name('account.orderDetail');
         Route::get('/logout', [AuthController::class, 'logout'])->name('account.logout');
     });
@@ -105,9 +133,17 @@ Route::group(['prefix' => 'admin'], function () {
 
     });
 
+    // Route::get('/optimize-clear', function () {
+    //     Artisan::call('optimize:clear');
+    //     return response()->json(['message' => 'Optimization cache cleared successfully.']);
+    // });
     Route::group(['middleware' => 'admin.auth'], function () {
+
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
+
+        // Route for clearing cache
+        Route::get('/clear-cache', [HomeController::class, 'clearCache'])->name('admin.clearCache');
 
 
         //Category Route
@@ -182,8 +218,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.destroy');
 
         // Discount - Coupon Routes.
-
-
         Route::get('/coupons', [DiscountCodeController::class, 'index'])->name('coupons.index');
         // // Add this line to define the route for fetching sub-categories
         // //Route::get('/sub-categories', [ProductController::class, 'getSubCategories'])->name('sub-categories.getSubCategories');
@@ -196,7 +230,19 @@ Route::group(['prefix' => 'admin'], function () {
         // Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 
+        // Order Routes 
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{id}', [OrderController::class, 'detail'])->name('orders.detail');
+        Route::post('/order/change-status/{id}', [OrderController::class, 'changeOrderStatus'])->name('orders.changeOrderStatus');
+        Route::post('/order/send-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('orders.sendInvoiceEmail');
 
+        // Users Route
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{users}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{users}', [UserController::class, 'update'])->name('users.update');
+        // Route::delete('/brands/{brands}', [BrandController::class, 'destroy'])->name('brands.delete');
 
         //temp-images.create
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');

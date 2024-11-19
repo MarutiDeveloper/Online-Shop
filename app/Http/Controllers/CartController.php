@@ -14,6 +14,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use stripe;
+use Illuminate\view\View;
+
 
 class CartController extends Controller
 {
@@ -250,7 +253,7 @@ class CartController extends Controller
         // Step-3 Save Data in Orders Table.
         if ($request->payment_method == 'cod') {
 
-            $discountCodeId = '';
+            $discountCodeId = NULL;
             $promoCode = '';
             $shipping = 0;
             $discount = 0;
@@ -334,7 +337,20 @@ class CartController extends Controller
                 $orderItem->price = $item->price;
                 $orderItem->total = $item->price * $item->qty;
                 $orderItem->save();
+
+                // Update Product Stock.
+                $productData = Product::find($item->id);
+                if ($productData->track_qty == 'Yes') {
+                    $currentQty = $productData->qty;
+                    $updatedQty = $currentQty - $item->qty;
+                    $productData->qty = $updatedQty;
+                    $productData->save();
+                }
+
             }
+
+            // Send Order E-mail
+            orderEmail($order->id, 'customer');
 
             $message = 'You have a Successfully Order Placed...! ';
             session()->flash('success', $message);
@@ -353,6 +369,7 @@ class CartController extends Controller
         }
 
     }
+
     public function thankyou($id)
     {
         // Find the order by its ID
@@ -443,7 +460,7 @@ class CartController extends Controller
     public function applyDiscount(Request $request)
     {
         $code = DiscountCoupon::where('code', $request->code)->first();
-    
+
         if (!$code) {
             $message = 'Invalid Discount Coupon Code...!';
             session()->flash('error', $message);
@@ -452,24 +469,24 @@ class CartController extends Controller
                 'message' => $message
             ]);
         }
-    
+
         // Check if coupon is valid based on start and end dates
         $now = Carbon::now();
-    
+
         if ($code->starts_at && $now->lt(Carbon::parse($code->starts_at))) {
             return response()->json([
                 'status' => false,
                 'message' => 'Discount Coupon has not started yet...!'
             ]);
         }
-    
+
         if ($code->expires_at && $now->gt(Carbon::parse($code->expires_at))) {
             return response()->json([
                 'status' => false,
                 'message' => 'Discount Coupon has expired...!'
             ]);
         }
-    
+
         // Max usage checks
         if ($code->max_uses > 0 && Order::where('coupon_code_id', $code->id)->count() >= $code->max_uses) {
             return response()->json([
@@ -477,7 +494,7 @@ class CartController extends Controller
                 'message' => 'Discount Coupon usage limit reached...!'
             ]);
         }
-    
+
         // Max usage per user check
         if ($code->max_uses_user > 0 && Order::where(['coupon_code_id' => $code->id, 'user_id' => Auth::user()->id])->count() >= $code->max_uses_user) {
             return response()->json([
@@ -485,7 +502,7 @@ class CartController extends Controller
                 'message' => 'You have already used this Discount Coupon...!'
             ]);
         }
-    
+
         // Minimum amount check
         $subTotal = (float) str_replace(',', '', Cart::subtotal(2, '.', ''));
         if ($code->min_amount > 0 && $subTotal < $code->min_amount) {
@@ -494,10 +511,10 @@ class CartController extends Controller
                 'message' => 'Minimum cart total must be ₹. ' . $code->min_amount . ' to apply this coupon.',
             ]);
         }
-    
+
         // Store the discount code in the session
         session()->put('code', $code);
-    
+
         // Return the order summary after applying the discount
         return $this->getOrderSummery($request);
     }

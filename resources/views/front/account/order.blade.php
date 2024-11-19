@@ -6,9 +6,12 @@
     <div class="container">
         <div class="light-font">
             <ol class="breadcrumb primary-color mb-0">
-                <li class="breadcrumb-item"><a class="white-text" href="{{ route('account.profile') }}">My Account</a>
+                <li class="breadcrumb-item">
+                    <a class="white-text" href="{{ route('account.profile') }}">My Account</a>
                 </li>
-                <li class="breadcrumb-item">My Orders</li>
+                <li class="breadcrumb-item">
+                    <i class="fas fa-shopping-bag"></i> My Orders
+                </li>
             </ol>
         </div>
     </div>
@@ -50,24 +53,28 @@
                                         @foreach ($orders as $order)
                                             <tr>
                                                 <td>
-                                                    <h5><a href="{{ route('account.orderDetail', $order->id) }}">{{ $order->id }}</a></h5>
+                                                    <h5><a
+                                                            href="{{ route('account.orderDetail', $order->id) }}">{{ $order->id }}</a>
+                                                    </h5>
                                                 </td>
                                                 <h5>
                                                     <td>{{  \Carbon\Carbon::parse($order->created_at)->format('d M, Y') }}</td>
                                                 </h5>
                                                 <td style="font-family:'Times New Roman', Times, serif ;">
                                                     @if ($order->status == 'pending')
-                                                    <h5><span class="badge bg-danger">Pending</span></h5>
+                                                        <h5><span class="badge bg-danger">Pending</span></h5>
                                                     @elseif ($order->status == 'shipped')
-                                                    <h5><span class="badge bg-info">Shipped</span></h5>
+                                                        <h5><span class="badge bg-info">Shipped</span></h5>
+                                                    @elseif($order->status == 'delivered')
+                                                        <h5><span class="badge bg-success">Delivered</span></h5>
                                                     @else
-                                                    <h5><span class="badge bg-success">Delivered</span></h5>
+                                                        <h5><span class="badge bg-danger">Cancelled</span></h5>
                                                     @endif
-                                                    
+
                                                 </td>
                                                 <td>
                                                     <h4><strong style="color: #28a745; font-size: 18px;"><span>₹.
-                                                            </span>{{ number_format($order->grand_total,2) }}/-</strong></h4>
+                                                            </span>{{ number_format($order->grand_total, 2) }}/-</strong></h4>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Artisan;
 
 class Kernel extends HttpKernel
 {
@@ -22,6 +24,13 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
+
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->call(function () {
+        Artisan::call('optimize:clear');
+    })->everyFiveMinutes();
+}
 
     /**
      * The application's route middleware groups.

@@ -12,4 +12,19 @@ class Order extends Model
 {
     return $this->belongsToMany(Product::class, 'order_items', 'order_id', 'product_id');
 }
+public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
+public function items()
+{
+    return $this->hasMany(OrderItem::class);
+}
+
+public function orderItems()
+{
+    return $this->hasMany(OrderItem::class);
+}
+
 }

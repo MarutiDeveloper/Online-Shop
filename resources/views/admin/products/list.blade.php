@@ -72,7 +72,7 @@
                                                                                 width="50" alt="Default Image" />
                                                                         @endif
                                                                     </td>
-                                                                    <td><a href="#">{{ $product->title }}</a></td>
+                                                                    <td><a href="{{ route('product.edit', $product->id) }}">{{ $product->title }}</a></td>
                                                                     <td>₹ {{ $product->price }}</td>
                                                                     <td>{{ $product->qty }} </td>
                                                                     <td>{{ $product->sku }}</td>
