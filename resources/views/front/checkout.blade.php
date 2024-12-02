@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
 
-
+                                
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -228,7 +228,7 @@
 
                         <div class="">
                             <input type="radio" name="payment_method" value="cod" id="payment_method_two">
-                            <label for="payment_method_two" class="form-check-label">Card-Payment</label>
+                            <label for="payment_method_two" class="form-check-label">Stripe</label>
                         </div>
 
 
@@ -257,15 +257,8 @@
                         <div class="pt-4">
                             <button type="submit" class="btn-dark btn btn-block w-100"
                                 style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size:larger;">
-                                <i class="fas fa-save"></i> <label for="">Confirm your Order</label>
+                                <i class="fas fa-save" style="margin-right: 8px;"></i> Confirm - Your Order
                             </button>
-                        </div>
-                        <!-- Stripe Payment Button -->
-                        <div class="pt-4">
-                            <a href="https://razorpay.me/@tejaskumarpradipbhaijoshi" type="button" class="btn-dark btn btn-block w-100" id="pay-now"
-                                style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size:larger;">
-                                <i class="fas fa-credit-card"></i> Pay Now By Stripe
-                            </a>
                         </div>
                     </div>
 
@@ -278,9 +271,7 @@
     </div>
 </section>
 @endsection
-@section('customJs') 
-<!-- Stripe JavaScript Library -->
-
+@section('customJs')
 <script>
     $("#payment_method_one").click(function () {
         if ($(this).is(":checked") == true) {
@@ -530,66 +521,4 @@
     });
 
 </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    document.getElementById("pay-now").addEventListener("click", async function () {
-        try {
-            // Initiate payment session
-            const response = await fetch("{{ route('createCheckoutSession') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    order_id: 1, // Replace with actual order ID
-                    product_id: 2 // Replace with actual product ID
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-
-            // Razorpay checkout options
-            const options = {
-                key: "{{ env('RAZORPAY_KEY') }}", // Razorpay key from .env
-                amount: data.amount,
-                currency: data.currency,
-                name: "Online Shop",
-                description: data.product_name,
-                order_id: data.razorpay_order_id,
-                handler: function (response) {
-                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-                    window.location.href = "{{ route('payment.success') }}";
-                },
-                prefill: {
-                    name: "Customer Name", // Replace dynamically
-                    email: "customer@example.com", // Replace dynamically
-                    contact: "9999999999", // Replace dynamically
-                },
-                theme: {
-                    color: "#3399cc",
-                },
-                modal: {
-                    ondismiss: function () {
-                        alert("Payment cancelled by user.");
-                    },
-                },
-            };
-
-            const rzp = new Razorpay(options);
-            rzp.open();
-        } catch (error) {
-            console.error("Error initiating payment:", error);
-            alert("Failed to initiate payment. Please try again.");
-        }
-    });
-</script>
-
-
-
 @endsection

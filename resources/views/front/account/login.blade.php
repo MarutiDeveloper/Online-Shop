@@ -1,4 +1,3 @@
-
 <!-- <html>Login with Google</html> -->
 
 @extends('front.layouts.app')
@@ -141,7 +140,7 @@
                 </div>
 
                 <div class="form-group small">
-                    <a href="#" class="forgot-link">Forgot Password?</a>
+                    <a href="{{ route('front.forgotPassword')}}" class="forgot-link">Forgot Password ?</a>
                 </div>
 
                 <input type="submit" class="btn btn-dark btn-block btn-lg" value="Login">
@@ -149,9 +148,9 @@
 
             </form>
             <div class="d-flex justify-content-center">
-                <a class="btn btn-outline-light  btn-lg" href="{{ route('google.login') }}">   
-                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Google Login"
-                        style="height: 75px; width: auto;">
+                <a class="btn btn-outline-light" href="{{ route('google.login') }}">
+                    <img class="shadow-lg   rounded" src="{{ asset('front-assets/images/GoogleSignUpDark.png') }}"
+                        alt="Google Login" style="height: 50px; width: auto;">
                 </a>
             </div>
 

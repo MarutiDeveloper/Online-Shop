@@ -48,6 +48,13 @@
                         <p>Products</p>
                     </a>
                 </li>
+                <!-- Product Rating Link -->
+                <li class="nav-item">
+                    <a href="{{ route('product.productRatings') }}" class="nav-link">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>Product Ratings</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a href="{{ route('shipping.create') }}" class="nav-link">
@@ -79,13 +86,19 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.contact_us.index') }}" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
-                        <p>Pages</p>
+                        <p>Create-Company</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.clearCache') }}" class="nav-link">
+                    <a href="{{ route('pages.index') }}" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
-                        <p>Reset</p>
+                        <p>Pages</p>
+                    </a>
+                </li>
+                <li class="nav-item" style="visibility:visible;">
+                    <a href="{{ route('admin.clearCache') }}" class="nav-link">
+                    <i class="nav-icon fas fa-trash-alt"></i> <!-- Recycle Bin Icon -->
+                        <p>Cash-Clear</p>
                     </a>
                 </li>
             </ul>

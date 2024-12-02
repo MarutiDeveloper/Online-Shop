@@ -172,6 +172,7 @@
 
 <section class="section-4 pt-5">
     <div class="container">
+   
         <div class="section-title d-flex align-items-center">
             <i class="fas fa-star text-warning me-2" style="font-size: 1.5rem;"></i>
             <h2>Featured Products</h2>

@@ -22,40 +22,63 @@
     <link rel="stylesheet" href="{{ asset('admin-assets/css/datetimepicker.css') }}">
 
     <link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
-   
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+
 </head>
 
 <body class="hold-transition sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
+
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <!-- Right navbar links -->
+            <!-- Left navbar links -->
             <ul class="navbar-nav">
+                <!-- Toggle button -->
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-            </ul>
-            <div class="navbar-nav pl-2">
-                <!-- <ol class="breadcrumb p-0 m-0 bg-white">
-                    <li class="breadcrumb-item"><a href="products.html">Products</a></li>
-						<li class="breadcrumb-item active">Dashboard</li>
-					</ol> -->
-            </div>
-
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt"></i>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                        <i class="fas fa-bars"></i>
                     </a>
                 </li>
+
+                <!-- Home link -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link home-link">
+                        <img src="{{ asset('admin-assets/img/home.ico') }}" alt="Home Icon"
+                            style="width: 20px; height: 20px; vertical-align: middle;">
+                        <strong style="font-weight: bolder ;">Home</strong>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Breadcrumb placeholder (Optional, uncomment if needed) -->
+            <!--
+    <div class="navbar-nav pl-2">
+        <ol class="breadcrumb p-0 m-0 bg-white">
+            <li class="breadcrumb-item"><a href="products.html">Products</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+    -->
+           
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Fullscreen button -->
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                        <!-- <i class="fas fa-expand-arrows-alt"></i> -->
+                        <image src="https://ssl.gstatic.com/gb/images/bar/al-icon.png" alt="" height="24" width="24"></image>
+                    </a>
+                </li>
+
+
+                <!-- User dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link p-0 pr-3" data-toggle="dropdown" href="#">
-                        <img src="{{ asset('admin-assets/img/avatar5.png') }}" class='img-circle elevation-2' width="40"
-                            height="40" alt="">
+                        <img src="{{ asset('admin-assets/img/avatar5.png') }}" class="img-circle elevation-2" width="40"
+                            height="40" alt="User Avatar">
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-3">
                         <div class="text-center">
@@ -64,18 +87,23 @@
                             <div class="mb-3">{{ Auth::guard('admin')->user()->email }}</div>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <!-- <div class="text-center">
-                            <a href="#" class="dropdown-item">
-                                <i class="fas fa-user-cog mr-2"></i> Settings
-                            </a>
-                        </div> -->
+                        <!-- Optional Settings Link -->
+                        <!--
+                <div class="text-center">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user-cog mr-2"></i> Settings
+                    </a>
+                </div>
+                -->
                         <div class="dropdown-divider"></div>
-                        <!-- <div class="text-center">
-                            <a href="#" class="dropdown-item">
+                        <!-- Change Password -->
+                        <div class="text-center">
+                            <a href="{{ route('admin.showChangePasswordForm') }}" class="dropdown-item">
                                 <i class="fas fa-lock mr-2"></i> Change Password
                             </a>
-                        </div> -->
+                        </div>
                         <div class="dropdown-divider"></div>
+                        <!-- Logout -->
                         <div class="text-center">
                             <a href="{{ route('admin.logout') }}" class="dropdown-item text-danger">
                                 <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -110,17 +138,17 @@
 
     <!-- Summernote -->
     <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js') }}"></script>
-    
+
     <script src="{{ asset('admin-assets/plugins/select2/js/select2.min.js') }}"></script>
-    
+
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('admin-assets/js/demo.js') }}"></script>
 
     <script src="{{ asset('admin-assets/js/datetimepicker.js') }}"></script>
 
-    <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script>  
+    <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script>
 
-     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>   -->
     <script type="text/javascript">
         $.ajaxSetup({

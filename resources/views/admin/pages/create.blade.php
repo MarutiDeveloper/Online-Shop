@@ -6,10 +6,10 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;">
-                <h1>Create Page</h1>
+                <h1>Page / Create</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="{{ route('categories.index') }}" class="btn btn-primary">Back</a>
+                <a href="{{ route('pages.index') }}" class="btn btn-primary">Back</a>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
             </div>
             <div class="pb-5 pt-3">
                 <button type="submit" class="btn btn-primary">Create</button>
-                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                <a href="{{ route('pages.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
         </form>
     </div>
@@ -75,7 +75,7 @@
                 $("button[type=submit]").prop('disabled', false);
                 if (response["status"] == true) {
 
-                    window.location.href = "{{ route('categories.index') }}";
+                    window.location.href = "{{ route('pages.index') }}";
 
                     $("#name").removeClass('is-invalid').siblings('p')
                         .removeClass('invalid-feedback').html("");
@@ -124,8 +124,7 @@
         });
     });
 
-  
-
+   
 </script>
 
 @endsection

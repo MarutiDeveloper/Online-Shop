@@ -14,9 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use stripe;
-use Illuminate\view\View;
-
 
 class CartController extends Controller
 {
@@ -175,19 +172,25 @@ class CartController extends Controller
             $userCountry = $customerAddress->country_id;
             $shippingInfo = ShippingCharge::where('country_id', $userCountry)->first();
 
-            //echo $shippingInfo->amount;
+            if ($shippingInfo !== null) {
+                // Only proceed if shippingInfo is found
+                $totalQty = 0;
+                $totalShippingCharge = 0;
+                $grandTotal = 0;
 
-            $totalQty = 0;
-            $totalShippingCharge = 0;
-            $grandTotal = 0;
-            foreach (Cart::content() as $item) {
-                $totalQty += $item->qty;
+                foreach (Cart::content() as $item) {
+                    $totalQty += $item->qty;
+                }
+
+                $totalShippingCharge = $totalQty * $shippingInfo->amount;
+                $grandTotal = ($subTotal - $discount) + $totalShippingCharge;
+            } else {
+                // Handle the case where no shipping information is found
+                // You might want to set a default shipping charge or an error message
+                $totalShippingCharge = 0;
+                $grandTotal = ($subTotal - $discount); // No shipping charge if no information is found
+                // Optionally, you can log or notify that no shipping info was found for the country
             }
-
-            $totalShippingCharge = $totalQty * $shippingInfo->amount;
-
-            $grandTotal = ($subTotal - $discount) + $totalShippingCharge;
-
         } else {
             $grandTotal = ($subTotal - $discount);
             $totalShippingCharge = 0;
@@ -369,7 +372,6 @@ class CartController extends Controller
         }
 
     }
-
     public function thankyou($id)
     {
         // Find the order by its ID

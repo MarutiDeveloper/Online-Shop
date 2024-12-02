@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\category;
 use App\Models\Product;
+use App\Models\ProductRating;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
 {
@@ -92,12 +94,15 @@ class ShopController extends Controller
     public function product($slug)
     {
         //$slug;
-        $product = Product::where('slug', $slug)->with('product_images')->first();
+        $product = Product::where('slug', $slug)
+                                        ->withCount('product_ratings')
+                                        ->withSum('product_ratings', 'rating')
+                                        ->with(['product_images', 'product_ratings'])->first();
         //dd($product);
         if ($product == null) {
             abort(404);
         }
-
+        //dd($product);
         // Fetch Related Products
         $relatedProducts = []; // Initialize as an empty array
 
@@ -106,11 +111,72 @@ class ShopController extends Controller
             $relatedProducts = Product::whereIn('id', $productArray)->where('status', 1)->get();
         }
 
+        $avgRating = '0.00';
+        $avgRatingPer = 0;
+        if ($product->product_ratings_count > 0) {
+            $avgRating = number_format(
+                ($product->product_ratings_sum_rating / $product->product_ratings_count), 
+                2
+            );
+            $avgRatingPer = ($avgRating*100)/5;
+        }
+       
+
         $data = [
             'product' => $product,
             'relatedProducts' => $relatedProducts, // Assign Related Products to the array
+            'avgRating' => $avgRating, // Assign Rating Product Average.
+            'avgRatingPer' => $avgRatingPer, // Assign Rating Product Average.
         ];
 
+        // Rating Calculation.
+        // "product_ratings_count" => 3
+        // "product_ratings_sum_rating" => "10.00"
+
+       
+        
+
         return view('front.product', $data);
+    }
+    public function saveRating ($id,Request $request) {
+        $validator = Validator::make($request->all(),[
+            'name'  =>  'required|min:5',
+            'email' =>  'required|email',
+            'comment'   => 'required|min:5',
+            'rating'    =>  'required'
+
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'status'    =>  false,
+                'errors'    =>  $validator->errors()
+            ]);
+        }
+
+        $count = ProductRating ::where('email', $request->email)->count();
+
+        if ($count > 0) {
+            session()->flash('error', 'You have already give your Rating for this Product. !');
+            return response()->json([
+                'status'    =>  true,
+            ]);
+        }
+
+        $productRating = new ProductRating;
+        $productRating->product_id = $id;
+        $productRating->username = $request->name;
+        $productRating->email = $request->email;
+        $productRating->comment = $request->comment;
+        $productRating->rating = $request->rating;
+        $productRating->status = 0;
+        $productRating->save();
+
+        session()->flash('success', 'Thanks for your Rating !');
+
+        return response()->json([
+            'status'    =>  true,
+            'message'    =>  'Thanks for your Rating !'
+        ]);
     }
 }

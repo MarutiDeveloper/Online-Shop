@@ -129,7 +129,7 @@
 <script>
     function deleteUser(id) {
 
-        var url = '{{ route("categories.delete", "ID") }}';
+        var url = '{{ route("users.destroy", "ID") }}';
         var newUrl = url.replace("ID", id)
 
         if (confirm("Are you sure you want to Delete...?")) {
@@ -143,7 +143,7 @@
                 },
                 success: function (response) {
                     if (response["status"]) {
-                        window.location.href = "{{ route('categories.index') }}";
+                        window.location.href = "{{ route('users.index') }}";
                     }
                 }
             });

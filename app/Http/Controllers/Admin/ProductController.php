@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductRating;
 use App\Models\SubCategory;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
@@ -100,9 +101,9 @@ class ProductController extends Controller
             $product->is_featured = $request->is_featured;
             $product->shipping_returns = $request->shipping_returns;
             $product->short_description = $request->short_description;
-            $product->related_products = !empty($request->related_products) 
-            ? implode(',', $request->related_products) 
-            : null;
+            $product->related_products = !empty($request->related_products)
+                ? implode(',', $request->related_products)
+                : null;
             $product->save();
 
 
@@ -175,34 +176,34 @@ class ProductController extends Controller
         // Fetch product images
         $productImages = ProductImage::where('product_id', $product->id)->get(); // Adjust as per your DB schema
 
-        
-      // Fetch Related Products
-$relatedProducts = []; // Initialize as an empty array
 
-if (!empty($product->related_products)) {
-    $productArray = explode(',', $product->related_products);
-    $relatedProducts = Product::whereIn('id', $productArray)->with('product_images')->get();
-}
+        // Fetch Related Products
+        $relatedProducts = []; // Initialize as an empty array
 
-// Fetch Subcategories based on the product's category_id
-$subCategories = SubCategory::where('category_id', $product->category_id)->get();
+        if (!empty($product->related_products)) {
+            $productArray = explode(',', $product->related_products);
+            $relatedProducts = Product::whereIn('id', $productArray)->with('product_images')->get();
+        }
 
-// Fetch other required data (e.g., categories, brands, etc.)
-$categories = Category::orderBy('name', 'ASC')->get();
-$brands = Brand::orderBy('name', 'ASC')->get();
+        // Fetch Subcategories based on the product's category_id
+        $subCategories = SubCategory::where('category_id', $product->category_id)->get();
 
-// Prepare data for the view
-$data = [
-    'product' => $product,          // Assign product to the array
-    'subCategories' => $subCategories, // Assign subcategories to the array
-    'productImages' => $productImages, // Assign product images to the array
-    'relatedProducts' => $relatedProducts, // Assign related products to the array
-    'categories' => $categories,    // Add categories to the array
-    'brands' => $brands,            // Add brands to the array
-];
+        // Fetch other required data (e.g., categories, brands, etc.)
+        $categories = Category::orderBy('name', 'ASC')->get();
+        $brands = Brand::orderBy('name', 'ASC')->get();
 
-// Return the view with the necessary data
-return view('admin.products.edit', $data);
+        // Prepare data for the view
+        $data = [
+            'product' => $product,          // Assign product to the array
+            'subCategories' => $subCategories, // Assign subcategories to the array
+            'productImages' => $productImages, // Assign product images to the array
+            'relatedProducts' => $relatedProducts, // Assign related products to the array
+            'categories' => $categories,    // Add categories to the array
+            'brands' => $brands,            // Add brands to the array
+        ];
+
+        // Return the view with the necessary data
+        return view('admin.products.edit', $data);
     }
     public function update($id, Request $request)
     {
@@ -252,9 +253,9 @@ return view('admin.products.edit', $data);
             $product->is_featured = $request->is_featured;
             $product->shipping_returns = $request->shipping_returns;
             $product->short_description = $request->short_description;
-            $product->related_products = !empty($request->related_products) 
-            ? implode(',', $request->related_products) 
-            : null;
+            $product->related_products = !empty($request->related_products)
+                ? implode(',', $request->related_products)
+                : null;
             $product->save();
 
             //related_products
@@ -392,6 +393,44 @@ return view('admin.products.edit', $data);
         return response()->json([
             'tags' => $tempProduct,
             'status' => true
+        ]);
+    }
+    public function productRatings(Request $request)
+    {
+        // Initialize query to fetch product ratings with product title, ordered by created date
+        $ratings = ProductRating::select('product_ratings.*', 'products.title as productTitle')
+            ->leftJoin('products', 'products.id', '=', 'product_ratings.product_id')
+            ->orderBy('product_ratings.created_at', 'DESC');
+    
+        // Apply search filter if keyword is provided
+        $ratings = $ratings->when($request->has('keyword') && !empty($request->keyword), function ($query) use ($request) {
+            $keyword = '%' . $request->keyword . '%';
+    
+            // Search by product title or username
+            $query->where(function ($subQuery) use ($keyword) {
+                $subQuery->orWhere('products.title', 'like', $keyword)
+                         ->orWhere('product_ratings.username', 'like', $keyword);
+            });
+        });
+    
+        // Paginate results
+        $ratings = $ratings->paginate(10);
+    
+        // Return the view with the ratings data
+        return view('admin.products.rating', compact('ratings'));
+    }
+    
+
+    public function changeRatingStatus(Request $request)
+    {
+        $productRating = ProductRating::findOrFail($request->id);
+        $productRating->status = $request->status;
+        $productRating->save();
+
+        session()->flash('success', 'You have Successfully Updates Status....!');
+        return response()->json([
+            'status' => true,
+            'message' => 'You have Successfully Updates Status....!'
         ]);
     }
 }

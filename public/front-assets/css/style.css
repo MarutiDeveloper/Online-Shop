@@ -139,3 +139,21 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
+    /* Keyframes for zoom in and zoom out effect */
+    @keyframes zoomInOut {
+        0% {
+            transform: scale(1); /* Normal size */
+        }
+        50% {
+            transform: scale(1.2); /* Zoom in */
+        }
+        100% {
+            transform: scale(1); /* Zoom out to normal size */
+        }
+    }
+
+    /* Applying the zoom in and zoom out effect to the icon */
+    .animated-zoom {
+        animation: zoomInOut 1.5s ease-in-out infinite; /* 1.5s for smooth transition */
+    }

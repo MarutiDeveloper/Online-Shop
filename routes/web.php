@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\adminlogincontroller;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\admin\BrandController;
@@ -18,11 +20,14 @@ use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\StripePaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\StripeCheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,27 +53,41 @@ Route::get('/optimize-clear', function () {
     return response()->json(['message' => 'Optimization cache cleared successfully.']);
 });
 
+// Generate Invoice Route
+Route::get('invoice/{id}/download', [InvoiceController::class, 'downloadInvoice'])->name('front.invoice');
+
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-items', [CartController::class, 'deleteItem'])->name('front.deleteItem.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
-//Route for creating the checkout session
-Route::post('/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->name('createCheckoutSession');
-Route::get('/payment-success', function () {
-    return "Payment Successful! Thank you for your purchase.";
-})->name('payment.success');
+Route::post('/page/contact-us-online-shop', [FrontController::class, 'sendContactEmail'])->name('contact_us.send');
+//Route for creating the Payment Session
+Route::controller(StripePaymentController::class)->group(function(){
+    Route::get('/stripe', 'stripe')->name('stripe');
+    Route::post('/stripe', 'stripePost')->name('stripe.post');
+    Route::get('/stripe-success',  'stripeSuccess')->name('stripe.success');
+});
+
+
+
+//Route for creating the Checkout Payment Session.
+Route::get('/checkout/payment', [StripeCheckoutController::class, 'checkout'])->name('checkout');
+Route::get('/payment/success', [StripeCheckoutController::class, 'success'])->name('stripe.success');
+Route::get('/payment/cancel', [StripeCheckoutController::class, 'cancel'])->name('stripe.cancel');
+
+//Route for Razor Pay.
+Route::get('/razorpay-checkout/{orderId}', [PaymentController::class, 'showCheckout'])->name('razorpay.checkout');
+Route::post('/razorpay-session', [PaymentController::class, 'createCheckoutSession'])->name('createCheckoutSession');
+Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 Route::get('/payment-failed', function () {
     return "Payment Failed! Please try again.";
 })->name('payment.cancel');
-// Route for the success page after payment
-// Route::get('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
-
-// Route for the cancel page after payment failure or cancellation
-// Route::get('/payment/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
+//Route for creating the checkout session
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
 // Route::get('/', [FrontController::class, 'showFooter'])->name('front.home'); // Adjust as needed
@@ -76,6 +95,15 @@ Route::post('/get-order-summery', [CartController::class, 'getOrderSummery'])->n
 Route::post('/apply-discount', [CartController::class, 'applyDiscount'])->name('front.applyDiscount');
 Route::post('/remove-discount', [CartController::class, 'removeCoupon'])->name('front.removeCoupon');
 Route::post('/add-to-wishlist', [FrontController::class, 'addToWishlist'])->name('front.addToWishlist');
+Route::get('/page/{slug}', [FrontController::class, 'page'])->name('front.page');
+//Routes for Forgot-Password
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('front.forgotPassword');
+Route::post('/process-forgot-password', [AuthController::class, 'processForgotPassword'])->name('front.processForgotPassword');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('front.resetPassword');
+Route::post('/process-reset-password', [AuthController::class, 'processResetPassword'])->name('front.processResetPassword');
+Route::post('/savr-rating/{productId}', [ShopController::class, 'saveRating'])->name('front.saveRating');
+
+
 
 // Route for clearing cache
 Route::get('/clear-cache', [FrontController::class, 'clearCache'])->name('front.clearCache');
@@ -115,6 +143,8 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/remove-product-from-wishlist', [AuthController::class, 'removeProductFromWishList'])->name('account.removeProductFromWishList');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetail'])->name('account.orderDetail');
         Route::get('/logout', [AuthController::class, 'logout'])->name('account.logout');
+        Route::get('/change-password', [AuthController::class, 'showChangePasswordForm'])->name('account.changePassword');
+        Route::post('/process-change-password', [AuthController::class, 'changePassword'])->name('account.processChangePassword');
     });
 
 });
@@ -209,6 +239,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::post('/product-images/update', [ProductImageController::class, 'update'])->name('product-images.update');
         Route::delete('/admin/product-images/', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
+        Route::get('/ratings', [ProductController::class, 'productRatings'])->name('product.productRatings');
+        Route::get('/change-rating-status', [ProductController::class, 'changeRatingStatus'])->name('product.changeRatingStatus');
 
         // Shipping Routes
         Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
@@ -242,10 +274,24 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{users}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{users}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{users}', [UserController::class, 'destroy'])->name('users.destroy');
         // Route::delete('/brands/{brands}', [BrandController::class, 'destroy'])->name('brands.delete');
+
+          // Pages Route
+          Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+          Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
+          Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
+          Route::get('/pages/{pages}/edit', [PageController::class, 'edit'])->name('pages.edit');
+          Route::put('/pages/{pages}', [PageController::class, 'update'])->name('pages.update');
+          Route::delete('/pages/{pages}', [PageController::class, 'destroy'])->name('pages.destroy');
 
         //temp-images.create
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+
+        // Setting Route.
+        Route::get('/change-password', [SettingController::class, 'showChangePasswordForm'])->name('admin.showChangePasswordForm');
+        // processChangePassword
+        Route::post('/process-change-password', [SettingController::class, 'processChangePassword'])->name('admin.processChangePassword');
 
         Route::get('/getSlug', function (Request $request) {
             $slug = '';

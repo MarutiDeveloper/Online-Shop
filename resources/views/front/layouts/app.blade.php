@@ -1,3 +1,5 @@
+<!-- <h3>class="rounded-circle bg-light animated-zoom"</h3> -->
+
 <!DOCTYPE html>
 <html class="no-js" lang="en_AU">
 
@@ -34,6 +36,8 @@
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icofont/1.0.1/css/icofont.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -65,13 +69,21 @@
 <body data-instant-intensity="mousedown">
 
     <div class="bg-light top-header">
+
         <div class="container">
             <div class="row align-items-center py-3 d-none d-lg-flex justify-content-between">
                 <div class="col-lg-4 logo">
                     <a href="{{ route('front.home') }}" class="text-decoration-none d-flex align-items-center">
                         <!-- Logo Image -->
-                        <img src="{{ asset('front-assets/images/Online-Shopping Logo.jpg') }}"
-                            class="rounded-circle bg-light" style="height: 70px; width: 70px; object-fit: contain;">
+                        <video class="rounded-circle bg-light" autoplay muted loop playsinline id="startupVideo"
+                            style="height: 70px; width: 70px; object-fit: contain;">
+                            <source src="{{ asset('front-assets/images/Online-Shopping Logo-2.mp4') }}"
+                                type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <!-- <img src="{{ asset('front-assets/images/Online-Shopping Logo.jpg') }}"
+                            class="rounded-circle bg-light "
+                            style="height: 70px; width: 70px; object-fit: contain;">     -->
 
                         <!-- Logo Text -->
                         <div>
@@ -167,6 +179,13 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="{{ route('front.home') }}" class="nav-link home-link">
+                                <img src="{{ asset('front-assets/images/home.ico') }}" alt="Home Icon"
+                                    style="width: 20px; height: 20px; vertical-align: middle;">
+                                Home
+                            </a>
+                        </li>
                         <!-- <li class="nav-item">
           				<a class="nav-link active" aria-current="page" href="index.php" title="Products">Home</a>
         			</li> -->
@@ -283,31 +302,34 @@
                                     {{ !empty($allContactInfo) ? $allContactInfo->company_name : '' }}
                                 </p> -->
                                 <!-- Logo Image -->
-                                <img src="{{ asset('front-assets/images/Online-Shopping Logo.jpg') }}"
-                                    class="rounded-circle bg-light"
-                                    style="height: 50px; width: 50px; object-fit: contain;">
-                                <span class="footer-link d-inline-block h5 text-uppercase text-primary bg-dark"
-                                    style="margin-left: 3px;">{{ $allContactInfo->company_name ?? 'Online Shop' }}</span><br><hr>
-                                    
-                                <address class="text-left text-uppercase text-primary"  style="font-size: medium ;"
-                                    style="font-family: Arial, sans-serif; font-size: 14px; font-style: normal;">
-                                    
-                                    <p style="margin: 0;">
-                                    <i class="fa fa-map-marker-alt me-1"></i>
-                                        {{ $allContactInfo->company_address ?? '123 Street, New York, USA' }}
-                                    </p>
-                                </address>
+                                <a href="{{ route('front.home') }}">
+                                    <img src="{{ asset('front-assets/images/Online-Shopping Logo.jpg') }}"
+                                        class="rounded-circle bg-light"
+                                        style="height: 50px; width: 50px; object-fit: contain;">
+                                    <span class="footer-link d-inline-block h5 text-uppercase text-primary bg-dark"
+                                        style="margin-left: 3px;">{{ $allContactInfo->company_name ?? 'Online Shop' }}</span><br>
+                                    <hr>
+                                </a>
+                                <a href="https://g.co/kgs/fYhm7ty" target="_blank">
+                                    <address class="text-left text-uppercase text-primary" style="font-size: medium ;"
+                                        style="font-family: Arial, sans-serif; font-size: 14px; font-style: normal;">
+
+                                        <p style="margin: 0;">
+                                            <i class="fa fa-map-marker-alt me-1"></i>
+                                            {{ $allContactInfo->company_address ?? '123 Street, New York, USA' }}
+                                        </p>
+                                    </address>
+                                </a>
                                 <p style="font-size: medium ;">
-                                     <a href="mailto:{{ $allContactInfo->company_email ?? 'example@example.com' }}"
+                                    <a href="mailto:{{ $allContactInfo->company_email ?? 'example@example.com' }}"
                                         class="footer-link"> Email:
                                         {{ $allContactInfo->company_email ?? 'example@example.com' }}
                                     </a>
-                                   
+
                                 </p>
                                 <p style="margin: 0;">
-                                   
-                                    <a href="tel:{{ $allContactInfo->company_phone_number ?? '000 000 0000' }}"
-                                        class="footer-link">  Phone: 
+                                    <a href="https://www.truecaller.com/search/in/+91{{ $allContactInfo->company_phone_number ?? '000 000 0000' }}"
+                                        arget="_blank" class="footer-link"> Phone:
                                         {{ $allContactInfo->company_phone_number ?? '000 000 0000' }}
                                     </a>
                                 </p>
@@ -320,11 +342,18 @@
                     <div class="footer-card mb-4">
                         <h3 class="footer-title">Important Links</h3>
                         <ul class="footer-list">
-                            <li><a href="about-us.php" title="About" class="footer-link">About</a></li>
+                            @if (staticPages()->isNotEmpty())
+                                @foreach (staticPages() as $page)
+                                    <li><a href="{{ route('front.page', $page->slug) }}" title="{{ $page->name }}"
+                                            class="footer-link">{{ $page->name }}</a></li>
+                                @endforeach
+
+                            @endif
+                            <!-- <li><a href="about-us.php" title="About" class="footer-link">About</a></li>
                             <li><a href="contact-us.php" title="Contact Us" class="footer-link">Contact Us</a></li>
                             <li><a href="#" class="footer-link">Privacy</a></li>
                             <li><a href="#" class="footer-link">Terms & Conditions</a></li>
-                            <li><a href="#" class="footer-link">Refund Policy</a></li>
+                            <li><a href="#" class="footer-link">Refund Policy</a></li> -->
                         </ul>
                     </div>
                 </div>

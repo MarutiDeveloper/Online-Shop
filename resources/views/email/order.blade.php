@@ -108,6 +108,9 @@
         <h3 id="order-id">Order ID is: #012345 - {{ $mailData['order']->id }}</h3>
         @endif
         
+        <!-- Add current date -->
+        <h4>Date: {{ now()->format('l, F j, Y') }}</h4> <!-- Example format: "Friday, November 30, 2024" -->
+        
 
         <h4>Product(s) Ordered:</h4>
         <table class="table">
@@ -151,11 +154,9 @@
             </tbody>
         </table>
 
-        
-
     </div>
     <!-- Shipping Address Section -->
-    <h4 >Shipping Address</h4>
+    <h4>Shipping Address</h4>
         <address class="text-left">
             <strong>{{ $mailData['order']->first_name . ' ' . $mailData['order']->last_name }}</strong><br>
             {{ $mailData['order']->address }},<br>
@@ -165,7 +166,6 @@
             Email: {{ $mailData['order']->email }}
         </address>
 
-        
 </body>
 
 </html>
