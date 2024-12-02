@@ -50,7 +50,7 @@ class GoogleController extends Controller
             return redirect()->route('account.profile');
         } catch (Exception $e) {
             // If there is an error, redirect back to the login page with an error message
-            return redirect('/login')->with('error', 'Failed to login with Google. Please try again.');
+            return redirect()->route('account.login')->with('error', 'Failed to login with Google. Please try again.');
         }
     }
 }

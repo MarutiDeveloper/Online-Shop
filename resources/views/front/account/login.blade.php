@@ -144,15 +144,15 @@
                 </div>
 
                 <input type="submit" class="btn btn-dark btn-block btn-lg" value="Login">
-
+                <div class="d-flex justify-content-center">
+                    <a class="btn btn-outline-light" href="{{ route('google.login') }}">
+                        <img class="shadow-lg   rounded" src="{{ asset('front-assets/images/GoogleSignUpDark.png') }}"
+                            alt="Google Login" style="height: 50px; width: auto;">
+                    </a>
+                </div>
 
             </form>
-            <div class="d-flex justify-content-center">
-                <a class="btn btn-outline-light" href="{{ route('google.login') }}">
-                    <img class="shadow-lg   rounded" src="{{ asset('front-assets/images/GoogleSignUpDark.png') }}"
-                        alt="Google Login" style="height: 50px; width: auto;">
-                </a>
-            </div>
+
 
             <div class="text-center small">Don't have an account? <a href="{{ route('account.register') }}">Sign up</a>
             </div>

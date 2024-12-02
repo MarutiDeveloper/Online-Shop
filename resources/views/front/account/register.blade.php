@@ -27,14 +27,16 @@
                 </div>
                 <div class="form-group">
                     <!-- <input type="text" class="form-control" placeholder="Phone" id="phone" name="phone"> -->
-                    <input type="tel" class="form-control" placeholder="Phone" id="phone" name="phone" pattern="[0-9]*" maxlength="15" required>
+                    <input type="tel" class="form-control" placeholder="Phone" id="phone" name="phone" pattern="[0-9]*"
+                        maxlength="15" required>
                     <p></p>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Password" id="password"
-                        name="password">
+                    <input type="password" class="form-control" placeholder="Password" id="password" name="password">
                     <p></p>
-                    <input type="checkbox" onclick="myFunction()"> <label style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; ;">Show Password</label>
+                    <input type="checkbox" onclick="myFunction()"> <label
+                        style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; ;">Show
+                        Password</label>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" placeholder="Confirm Password"
@@ -45,8 +47,15 @@
                     <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
                 <button type="submit" class="btn btn-dark btn-block btn-lg" value="Register">Register</button>
+                <!-- <div class="d-flex justify-content-center">
+                    <a class="btn btn-outline-light" href="{{ route('google.login') }}">
+                        <img class="shadow-lg   rounded" src="{{ asset('front-assets/images/GoogleSignUpDark.png') }}"
+                            alt="Google Login" style="height: 50px; width: auto;">
+                    </a>
+                </div> -->
             </form>
-            <div class="text-center small">Already have an account? <a href="{{ route('account.login') }}">Login Now</a></div>
+            <div class="text-center small">Already have an account? <a href="{{ route('account.login') }}">Login Now</a>
+            </div>
         </div>
     </div>
 </section>
@@ -65,7 +74,7 @@
     $("#registrationForm").submit(function (event) {
         event.preventDefault();
 
-        $("button[type=' submit ']").prop('disabled',true);
+        $("button[type=' submit ']").prop('disabled', true);
 
         $.ajax({
             url: '{{ route("account.processRegister") }}',
@@ -73,7 +82,7 @@
             data: $(this).serializeArray(),
             dataType: 'json',
             success: function (response) {
-                $("button[type=' submit ']").prop('disabled',false);
+                $("button[type=' submit ']").prop('disabled', false);
                 var errors = response.errors;
 
                 if (response.status == false) {
@@ -109,7 +118,7 @@
                         $("#password").removeClass('is-invalid');
                     }
 
-                }else {
+                } else {
                     $("#name").siblings("p").removeClass('invalid-feedback').html('');
                     $("#name").removeClass('is-invalid');
 
@@ -122,7 +131,7 @@
                     $("#password").siblings("p").removeClass('invalid-feedback').html('');
                     $("#password").removeClass('is-invalid');
 
-                    window.location.href= "{{ route('account.login') }}";
+                    window.location.href = "{{ route('account.login') }}";
                 }
 
             },

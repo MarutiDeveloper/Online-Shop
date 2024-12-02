@@ -129,12 +129,12 @@
 
                 <!-- <input type="submit" class="btn btn-dark btn-block btn-lg" value="Submit" style=" font-family: 'Times New Roman', Times, serif ;font-size: larger ;  "> -->
                 <button style=" font-family: 'Times New Roman', Times, serif ;font-size: larger ; " type="submit" value="Submit" class="btn btn-dark btn-block btn-lg" data-mdb-ripple-init>Submit</button>
-                <div class="d-flex justify-content-center">
+                <!-- <div class="d-flex justify-content-center">
                     <a class="btn btn-outline-light" href="{{ route('google.login') }}">
                         <img class="shadow-lg   rounded" src="{{ asset('front-assets/images/GoogleSignUpDark.png') }}"
                             alt="Google Login" style="height: 50px; width: auto;">
                     </a>
-                </div>
+                </div> -->
                 <div class="text-center small">
                     <strong>Do you remember your password ? </strong><br><a
                         class="btn btn-outline-light rounded"
