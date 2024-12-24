@@ -41,7 +41,7 @@ class GoogleController extends Controller
                  // Log in the newly created user
                  Auth::login($newUser);
             } else {
-                // If the user exists, log them in
+                // If the user exists, log them in 
                 Auth::login($existingUser);
  
             }
